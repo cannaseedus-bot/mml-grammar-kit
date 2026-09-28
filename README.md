@@ -17,6 +17,7 @@ This kit preserves the original KHANARY.CPP paths so references inside the XML a
 | `docs/KUHUL_PHASE_ALGEBRA.md` | Phase algebra reference. |
 | `docs/SEMANTIC_FOLDS.md` | Semantic fold/topology reference. |
 | `tools/check_mml_kit.py` | Dependency-free XML/reference smoke check for this kit. |
+| `skills/math-agent/SKILL.md` | Deterministic scalar, vector dot2, and 2x2 matrix skill metadata for grammar/vector consumers. |
 
 ## Validate
 
