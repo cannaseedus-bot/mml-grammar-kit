@@ -1,0 +1,902 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="emerald-ghost">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>K'UHUL MATH ENGINE — MathML Native Rendering + JS Execution</title>
+  <style>
+    :root {
+      --bg-void: #020617;
+      --bg-deep: #0a0f1a;
+      --bg-surface: #0f172a;
+      --glass-primary: rgba(22, 242, 170, 0.08);
+      --glass-secondary: rgba(34, 211, 238, 0.06);
+      --stroke-emerald: rgba(22, 242, 170, 0.4);
+      --stroke-cyan: rgba(34, 211, 238, 0.3);
+      --stroke-dim: rgba(148, 163, 184, 0.2);
+      --text-bright: #e6fffa;
+      --text-primary: #a5f3fc;
+      --text-muted: #64748b;
+      --emerald: #16f2aa;
+      --cyan: #22d3ee;
+      --purple: #a78bfa;
+      --gold: #fbbf24;
+      --glow-emerald: 0 0 30px rgba(22, 242, 170, 0.3);
+      --glow-cyan: 0 0 25px rgba(34, 211, 238, 0.25);
+      --radius-lg: 16px;
+      --radius-md: 12px;
+      --radius-sm: 8px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Space Grotesk', system-ui, sans-serif;
+      background: var(--bg-void);
+      color: var(--text-bright);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* Animated Background */
+    .cosmos {
+      position: fixed;
+      inset: 0;
+      background: 
+        radial-gradient(ellipse at 20% 20%, rgba(22, 242, 170, 0.08) 0%, transparent 50%),
+        radial-gradient(ellipse at 80% 80%, rgba(34, 211, 238, 0.06) 0%, transparent 50%),
+        radial-gradient(ellipse at 50% 50%, rgba(167, 139, 250, 0.04) 0%, transparent 60%),
+        var(--bg-void);
+      z-index: -1;
+    }
+
+    .cosmos::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: 
+        radial-gradient(1px 1px at 20% 30%, rgba(22, 242, 170, 0.4), transparent),
+        radial-gradient(1px 1px at 40% 70%, rgba(34, 211, 238, 0.3), transparent),
+        radial-gradient(1px 1px at 60% 20%, rgba(167, 139, 250, 0.3), transparent),
+        radial-gradient(1px 1px at 80% 60%, rgba(251, 191, 36, 0.3), transparent);
+      background-size: 250px 250px;
+      animation: drift 60s linear infinite;
+    }
+
+    @keyframes drift {
+      0% { transform: translateY(0) rotate(0deg); }
+      100% { transform: translateY(-250px) rotate(1deg); }
+    }
+
+    /* Header */
+    .header {
+      padding: 20px 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--stroke-dim);
+      background: rgba(2, 6, 23, 0.8);
+      backdrop-filter: blur(20px);
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .logo-glyph {
+      width: 44px;
+      height: 44px;
+      background: linear-gradient(135deg, var(--emerald), var(--cyan));
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      box-shadow: var(--glow-emerald);
+    }
+
+    .logo-text h1 {
+      font-size: 18px;
+      font-weight: 700;
+      background: linear-gradient(135deg, var(--emerald), var(--cyan));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .logo-text span {
+      font-size: 11px;
+      color: var(--text-muted);
+      letter-spacing: 0.1em;
+    }
+
+    .paradigm-badge {
+      padding: 8px 16px;
+      background: var(--glass-primary);
+      border: 1px solid var(--stroke-emerald);
+      border-radius: 999px;
+      font-size: 11px;
+      color: var(--emerald);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      box-shadow: var(--glow-emerald);
+    }
+
+    /* Main Layout */
+    .main {
+      display: grid;
+      grid-template-columns: 320px 1fr 360px;
+      gap: 20px;
+      padding: 20px 32px;
+      height: calc(100vh - 85px);
+    }
+
+    /* Panels */
+    .panel {
+      background: var(--glass-primary);
+      border: 1px solid var(--stroke-dim);
+      border-radius: var(--radius-lg);
+      backdrop-filter: blur(20px);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .panel-header {
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--stroke-dim);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .panel-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-primary);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .panel-body {
+      flex: 1;
+      overflow-y: auto;
+      padding: 16px;
+    }
+
+    /* Math Glyph Registry */
+    .glyph-section {
+      margin-bottom: 20px;
+    }
+
+    .glyph-section-title {
+      font-size: 10px;
+      color: var(--text-muted);
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+      padding-left: 4px;
+    }
+
+    .glyph-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+    }
+
+    .math-glyph {
+      aspect-ratio: 1;
+      background: var(--bg-surface);
+      border: 1px solid var(--stroke-dim);
+      border-radius: var(--radius-sm);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      position: relative;
+    }
+
+    .math-glyph:hover {
+      border-color: var(--stroke-emerald);
+      background: var(--glass-primary);
+      transform: translateY(-2px);
+      box-shadow: var(--glow-emerald);
+    }
+
+    .math-glyph.active {
+      border-color: var(--emerald);
+      background: rgba(22, 242, 170, 0.15);
+    }
+
+    .math-glyph .symbol {
+      font-size: 24px;
+    }
+
+    .math-glyph .label {
+      font-size: 9px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    /* Expression List */
+    .expr-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .expr-item {
+      padding: 12px;
+      background: var(--bg-surface);
+      border: 1px solid var(--stroke-dim);
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .expr-item:hover {
+      border-color: var(--stroke-cyan);
+      background: var(--glass-secondary);
+    }
+
+    .expr-item code {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      color: var(--cyan);
+    }
+
+    .expr-item .desc {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    /* Execution Canvas */
+    .canvas-panel {
+      border-color: var(--stroke-emerald);
+    }
+
+    .execution-area {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      height: 100%;
+    }
+
+    /* Input Section */
+    .input-section {
+      background: var(--bg-surface);
+      border: 1px solid var(--stroke-dim);
+      border-radius: var(--radius-md);
+      padding: 16px;
+    }
+
+    .input-label {
+      font-size: 11px;
+      color: var(--text-muted);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .math-input {
+      width: 100%;
+      background: var(--bg-void);
+      border: 1px solid var(--stroke-dim);
+      border-radius: var(--radius-sm);
+      padding: 14px 16px;
+      color: var(--text-bright);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 18px;
+      outline: none;
+      transition: all 0.2s ease;
+    }
+
+    .math-input:focus {
+      border-color: var(--emerald);
+      box-shadow: var(--glow-emerald);
+    }
+
+    .input-hints {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 10px;
+    }
+
+    .hint-chip {
+      padding: 4px 10px;
+      background: var(--glass-secondary);
+      border: 1px solid var(--stroke-dim);
+      border-radius: 999px;
+      font-size: 11px;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .hint-chip:hover {
+      border-color: var(--cyan);
+      color: var(--cyan);
+    }
+
+    /* Pipeline Visualization */
+    .pipeline-section {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .pipeline-stage {
+      background: var(--bg-surface);
+      border: 1px solid var(--stroke-dim);
+      border-radius: var(--radius-sm);
+      padding: 14px 16px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      transition: all 0.3s ease;
+      opacity: 0.5;
+    }
+
+    .pipeline-stage.active {
+      opacity: 1;
+      border-color: var(--stroke-emerald);
+      background: var(--glass-primary);
+    }
+
+    .pipeline-stage.complete {
+      opacity: 1;
+      border-color: var(--emerald);
+    }
+
+    .stage-icon {
+      width: 36px;
+      height: 36px;
+      background: var(--bg-void);
+      border: 1px solid var(--stroke-dim);
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      transition: all 0.3s ease;
+    }
+
+    .pipeline-stage.active .stage-icon,
+    .pipeline-stage.complete .stage-icon {
+      border-color: var(--emerald);
+      box-shadow: var(--glow-emerald);
+    }
+
+    .stage-info {
+      flex: 1;
+    }
+
+    .stage-name {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 2px;
+    }
+
+    .stage-detail {
+      font-size: 11px;
+      color: var(--text-muted);
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .stage-time {
+      font-size: 10px;
+      color: var(--emerald);
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    /* Result Section */
+    .result-section {
+      background: linear-gradient(135deg, var(--glass-primary), var(--glass-secondary));
+      border: 1px solid var(--stroke-emerald);
+      border-radius: var(--radius-md);
+      padding: 20px;
+      text-align: center;
+    }
+
+    .result-label {
+      font-size: 11px;
+      color: var(--text-muted);
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+
+    .result-value {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 32px;
+      font-weight: 700;
+      background: linear-gradient(135deg, var(--emerald), var(--cyan));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-shadow: 0 0 30px rgba(22, 242, 170, 0.5);
+    }
+
+    .result-meta {
+      margin-top: 12px;
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    .result-meta span {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    /* MathML Preview Card */
+    .mathml-preview {
+      background: var(--bg-surface);
+      border: 1px solid var(--stroke-cyan);
+      border-radius: var(--radius-md);
+      margin-top: 12px;
+      padding: 16px;
+      transition: all 0.2s ease;
+    }
+
+    .mathml-header {
+      font-size: 10px;
+      color: var(--cyan);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 12px;
+    }
+
+    .mathml-display {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 16px;
+      background: rgba(0, 0, 0, 0.3);
+      border-radius: var(--radius-sm);
+      overflow-x: auto;
+    }
+
+    math {
+      font-size: 1.2rem;
+      color: var(--text-bright);
+    }
+
+    mtext, mi, mn, mo {
+      color: var(--text-primary);
+    }
+
+    /* Execute Button */
+    .execute-btn {
+      width: 100%;
+      padding: 14px;
+      background: linear-gradient(135deg, var(--emerald), var(--cyan));
+      border: none;
+      border-radius: var(--radius-sm);
+      color: var(--bg-void);
+      font-family: inherit;
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      box-shadow: var(--glow-emerald);
+    }
+
+    .execute-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 0 40px rgba(22, 242, 170, 0.5);
+    }
+
+    .execute-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    /* K'uhul Code Panel */
+    .kuhul-panel .panel-header {
+      border-color: var(--stroke-cyan);
+    }
+
+    .kuhul-code {
+      background: var(--bg-void);
+      border: 1px solid var(--stroke-dim);
+      border-radius: var(--radius-sm);
+      padding: 16px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      line-height: 1.6;
+      overflow-x: auto;
+      margin-bottom: 16px;
+    }
+
+    .kuhul-line {
+      display: flex;
+      gap: 8px;
+      padding: 2px 0;
+      transition: background 0.2s ease;
+    }
+
+    .kuhul-line.highlight {
+      background: rgba(22, 242, 170, 0.1);
+      border-radius: 4px;
+    }
+
+    .kuhul-glyph {
+      color: var(--emerald);
+    }
+
+    .kuhul-phase {
+      color: var(--purple);
+    }
+
+    .kuhul-op {
+      color: var(--cyan);
+    }
+
+    .kuhul-value {
+      color: var(--gold);
+    }
+
+    .kuhul-comment {
+      color: var(--text-muted);
+      font-style: italic;
+    }
+
+    /* JS Output */
+    .js-section {
+      margin-top: auto;
+    }
+
+    .js-section-title {
+      font-size: 10px;
+      color: var(--text-muted);
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .js-code {
+      background: var(--bg-void);
+      border: 1px solid var(--stroke-dim);
+      border-radius: var(--radius-sm);
+      padding: 14px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      line-height: 1.5;
+      color: var(--text-primary);
+      overflow-x: auto;
+    }
+
+    .js-keyword { color: var(--purple); }
+    .js-function { color: var(--cyan); }
+    .js-number { color: var(--gold); }
+    .js-string { color: var(--emerald); }
+
+    /* Metrics */
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+      margin-top: 16px;
+    }
+
+    .metric-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--stroke-dim);
+      border-radius: var(--radius-sm);
+      padding: 12px;
+      text-align: center;
+    }
+
+    .metric-value {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--emerald);
+    }
+
+    .metric-label {
+      font-size: 10px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-top: 4px;
+    }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { 
+      background: var(--stroke-dim); 
+      border-radius: 3px; 
+    }
+    ::-webkit-scrollbar-thumb:hover { background: var(--stroke-emerald); }
+
+    @media (max-width: 1200px) {
+      .main {
+        grid-template-columns: 280px 1fr;
+      }
+      .kuhul-panel {
+        display: none;
+      }
+    }
+
+    @media (max-width: 800px) {
+      .main {
+        grid-template-columns: 1fr;
+        height: auto;
+      }
+      .panel {
+        min-height: 400px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="cosmos"></div>
+
+  <header class="header">
+    <div class="logo">
+      <div class="logo-glyph">∫</div>
+      <div class="logo-text">
+        <h1>K'UHUL MATH ENGINE</h1>
+        <span>JavaScript-Native + MathML Rendering</span>
+      </div>
+    </div>
+    <div class="paradigm-badge">⚡ NO PYTHON • MATHML VISUAL</div>
+  </header>
+
+  <main class="main">
+    <!-- Left Panel: Math Glyph Registry -->
+    <aside class="panel glyph-panel">
+      <div class="panel-header">
+        <div class="panel-title"><span>∑</span>Math Glyphs</div>
+      </div>
+      <div class="panel-body">
+        <div class="glyph-section"><div class="glyph-section-title">Arithmetic</div><div class="glyph-grid"><div class="math-glyph" data-op="add" data-symbol="+"><span class="symbol">+</span><span class="label">Add</span></div><div class="math-glyph" data-op="subtract" data-symbol="-"><span class="symbol">−</span><span class="label">Sub</span></div><div class="math-glyph" data-op="multiply" data-symbol="*"><span class="symbol">×</span><span class="label">Mul</span></div><div class="math-glyph" data-op="divide" data-symbol="/"><span class="symbol">÷</span><span class="label">Div</span></div><div class="math-glyph" data-op="power" data-symbol="^"><span class="symbol">^</span><span class="label">Pow</span></div><div class="math-glyph" data-op="mod" data-symbol="%"><span class="symbol">%</span><span class="label">Mod</span></div></div></div>
+        <div class="glyph-section"><div class="glyph-section-title">Calculus</div><div class="glyph-grid"><div class="math-glyph" data-op="integrate" data-symbol="∫("><span class="symbol">∫</span><span class="label">Int</span></div><div class="math-glyph" data-op="derivative" data-symbol="∂("><span class="symbol">∂</span><span class="label">Deriv</span></div><div class="math-glyph" data-op="limit" data-symbol="lim"><span class="symbol">lim</span><span class="label">Limit</span></div><div class="math-glyph" data-op="sum" data-symbol="∑("><span class="symbol">∑</span><span class="label">Sum</span></div><div class="math-glyph" data-op="product" data-symbol="∏("><span class="symbol">∏</span><span class="label">Prod</span></div></div></div>
+        <div class="glyph-section"><div class="glyph-section-title">Functions</div><div class="glyph-grid"><div class="math-glyph" data-op="sin" data-symbol="sin("><span class="symbol">sin</span><span class="label">Sine</span></div><div class="math-glyph" data-op="cos" data-symbol="cos("><span class="symbol">cos</span><span class="label">Cosine</span></div><div class="math-glyph" data-op="tan" data-symbol="tan("><span class="symbol">tan</span><span class="label">Tan</span></div><div class="math-glyph" data-op="log" data-symbol="log("><span class="symbol">log</span><span class="label">Log</span></div><div class="math-glyph" data-op="ln" data-symbol="ln("><span class="symbol">ln</span><span class="label">Nat Log</span></div><div class="math-glyph" data-op="sqrt" data-symbol="√("><span class="symbol">√</span><span class="label">Sqrt</span></div></div></div>
+        <div class="glyph-section"><div class="glyph-section-title">Constants</div><div class="glyph-grid"><div class="math-glyph" data-op="pi" data-symbol="π"><span class="symbol">π</span><span class="label">Pi</span></div><div class="math-glyph" data-op="e" data-symbol="e"><span class="symbol">e</span><span class="label">Euler</span></div><div class="math-glyph" data-op="phi" data-symbol="φ"><span class="symbol">φ</span><span class="label">Phi</span></div></div></div>
+        <div class="glyph-section"><div class="glyph-section-title">Example Expressions</div><div class="expr-list"><div class="expr-item" data-expr="∫(x^2, 0, 10)"><code>∫(x², 0→10)</code><div class="desc">Definite integral</div></div><div class="expr-item" data-expr="∂(x^3 + 2x)"><code>∂(x³ + 2x)</code><div class="desc">Derivative</div></div><div class="expr-item" data-expr="∑(n^2, 1, 100)"><code>∑(n², 1→100)</code><div class="desc">Sum of squares</div></div><div class="expr-item" data-expr="sin(π/4) + cos(π/4)"><code>sin(π/4) + cos(π/4)</code><div class="desc">Trig combination</div></div><div class="expr-item" data-expr="e^(i*π) + 1"><code>e^(iπ) + 1</code><div class="desc">Euler's identity</div></div></div></div>
+      </div>
+    </aside>
+
+    <!-- Center Panel: Execution Canvas + MathML Preview -->
+    <section class="panel canvas-panel">
+      <div class="panel-header"><div class="panel-title"><span>⚡</span>Execution Canvas</div><span style="font-size: 11px; color: var(--text-muted);">K'UHUL → JS → MathML</span></div>
+      <div class="panel-body">
+        <div class="execution-area">
+          <div class="input-section">
+            <div class="input-label"><span>📝</span>Mathematical Expression</div>
+            <input type="text" class="math-input" id="mathInput" placeholder="Enter expression: ∫(x^2, 0, 10) or sin(π/2)" autocomplete="off">
+            <div class="input-hints"><span class="hint-chip" data-hint="π">π</span><span class="hint-chip" data-hint="∫(">∫</span><span class="hint-chip" data-hint="∂(">∂</span><span class="hint-chip" data-hint="∑(">∑</span><span class="hint-chip" data-hint="√(">√</span><span class="hint-chip" data-hint="^2">x²</span></div>
+          </div>
+
+          <!-- New MathML Preview Block -->
+          <div class="mathml-preview" id="mathmlPreview" style="display: none;">
+            <div class="mathml-header"><span>📐</span> MathML Rendering</div>
+            <div class="mathml-display" id="mathmlContainer"></div>
+          </div>
+
+          <div class="pipeline-section">
+            <div class="pipeline-stage" id="stage-parse"><div class="stage-icon">📖</div><div class="stage-info"><div class="stage-name">[Pop] Parse Expression</div><div class="stage-detail" id="parse-detail">Waiting...</div></div><div class="stage-time" id="parse-time">—</div></div>
+            <div class="pipeline-stage" id="stage-ast"><div class="stage-icon">🌳</div><div class="stage-info"><div class="stage-name">[Wo] Build AST</div><div class="stage-detail" id="ast-detail">Waiting...</div></div><div class="stage-time" id="ast-time">—</div></div>
+            <div class="pipeline-stage" id="stage-compile"><div class="stage-icon">⚙️</div><div class="stage-info"><div class="stage-name">[Sek] Compile to JS</div><div class="stage-detail" id="compile-detail">Waiting...</div></div><div class="stage-time" id="compile-time">—</div></div>
+            <div class="pipeline-stage" id="stage-execute"><div class="stage-icon">⚡</div><div class="stage-info"><div class="stage-name">[Sek] Execute</div><div class="stage-detail" id="execute-detail">Waiting...</div></div><div class="stage-time" id="execute-time">—</div></div>
+            <div class="pipeline-stage" id="stage-render"><div class="stage-icon">🎨</div><div class="stage-info"><div class="stage-name">[Ch'en] Render Result + MathML</div><div class="stage-detail" id="render-detail">Waiting...</div></div><div class="stage-time" id="render-time">—</div></div>
+          </div>
+
+          <button class="execute-btn" id="executeBtn">⚡ Execute via K'UHUL</button>
+
+          <div class="result-section" id="resultSection" style="display: none;">
+            <div class="result-label">Computed Result</div>
+            <div class="result-value" id="resultValue">0</div>
+            <div class="result-meta"><span>⏱️ <span id="totalTime">0</span>ms total</span><span>🔢 <span id="precision">15</span> digits</span><span>🚀 MathML Active</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Right Panel: K'uhul Code -->
+    <aside class="panel kuhul-panel">
+      <div class="panel-header"><div class="panel-title"><span>🧬</span>K'UHUL Controller</div></div>
+      <div class="panel-body">
+        <div class="kuhul-code" id="kuhulCode">
+          <div class="kuhul-line"><span class="kuhul-comment"># K'UHUL Math Engine + MathML bridge</span></div>
+          <div class="kuhul-line" id="line-pop"><span class="kuhul-glyph">[⟁Pop</span><span class="kuhul-op">MathEngine</span><span class="kuhul-glyph">]</span></div>
+          <div class="kuhul-line" id="line-wo"><span>&nbsp;&nbsp;</span><span class="kuhul-phase">[Wo expr]</span><span class="kuhul-op">→</span><span class="kuhul-value" id="wo-value">"awaiting input"</span></div>
+          <div class="kuhul-line" id="line-sek1"><span>&nbsp;&nbsp;</span><span class="kuhul-phase">[Sek parse]</span><span class="kuhul-op">→</span><span class="kuhul-value" id="sek1-value">tokenize(expr)</span></div>
+          <div class="kuhul-line" id="line-sek2"><span>&nbsp;&nbsp;</span><span class="kuhul-phase">[Sek compile]</span><span class="kuhul-op">→</span><span class="kuhul-value" id="sek2-value">ast_to_js(ast)</span></div>
+          <div class="kuhul-line" id="line-sek3"><span>&nbsp;&nbsp;</span><span class="kuhul-phase">[Sek execute]</span><span class="kuhul-op">→</span><span class="kuhul-value" id="sek3-value">js.eval(compiled)</span></div>
+          <div class="kuhul-line" id="line-chen"><span>&nbsp;&nbsp;</span><span class="kuhul-phase">[Ch'en result]</span><span class="kuhul-op">→</span><span class="kuhul-value" id="chen-value">—</span></div>
+          <div class="kuhul-line" id="line-xul"><span class="kuhul-glyph">[⟁Xul</span><span class="kuhul-glyph">]</span></div>
+        </div>
+        <div class="js-section"><div class="js-section-title"><span>📜</span>Generated JavaScript</div><div class="js-code" id="jsCode"><span class="js-comment">// JavaScript executor ready</span></div></div>
+        <div class="metrics-grid"><div class="metric-card"><div class="metric-value" id="metricOps">0</div><div class="metric-label">Operations</div></div><div class="metric-card"><div class="metric-value" id="metricDepth">0</div><div class="metric-label">AST Depth</div></div><div class="metric-card"><div class="metric-value" id="metricBytes">0</div><div class="metric-label">JS Bytes</div></div><div class="metric-card"><div class="metric-value" id="metricRatio">—</div><div class="metric-label">Compression</div></div></div>
+      </div>
+    </aside>
+  </main>
+
+  <script>
+    // Reuse full K'uhul engine (condensed but same logic) from original + added MathML converter
+    class KuhulMathEngine {
+      constructor(){
+        this.constants = { 'π': Math.PI, 'pi': Math.PI, 'e': Math.E, 'φ': (1+Math.sqrt(5))/2, 'phi': (1+Math.sqrt(5))/2, '∞': Infinity, 'inf': Infinity };
+        this.functions = { 'sin':Math.sin,'cos':Math.cos,'tan':Math.tan,'asin':Math.asin,'acos':Math.acos,'atan':Math.atan,'sinh':Math.sinh,'cosh':Math.cosh,'tanh':Math.tanh,'exp':Math.exp,'log':Math.log10,'ln':Math.log,'log2':Math.log2,'sqrt':Math.sqrt,'√':Math.sqrt,'cbrt':Math.cbrt,'abs':Math.abs,'floor':Math.floor,'ceil':Math.ceil,'round':Math.round };
+        this.calculus = { '∫':(expr,a,b,n=1000)=>this.integrate(expr,a,b,n),'integrate':(expr,a,b,n=1000)=>this.integrate(expr,a,b,n),'∂':(expr,x,h=1e-10)=>this.derivative(expr,x,h),'∑':(expr,start,end)=>this.summation(expr,start,end),'∏':(expr,start,end)=>this.product(expr,start,end) };
+        this.metrics = { operations:0, astDepth:0, jsBytes:0 };
+      }
+      integrate(f,a,b,n){ if(n%2!==0)n++; let h=(b-a)/n, sum=f(a)+f(b); for(let i=1;i<n;i++){ let x=a+i*h; sum+=(i%2===0?2:4)*f(x); } return (h/3)*sum; }
+      derivative(f,x,h=1e-10){ return (f(x+h)-f(x-h))/(2*h); }
+      summation(f,s,e){ let sum=0; for(let n=s;n<=e;n++) sum+=f(n); return sum; }
+      product(f,s,e){ let prod=1; for(let n=s;n<=e;n++) prod*=f(n); return prod; }
+      parse(expr){
+        let start=performance.now(), norm=expr.replace(/\s+/g,'').replace(/×/g,'*').replace(/÷/g,'/').replace(/−/g,'-').replace(/²/g,'^2').replace(/³/g,'^3');
+        for(let [sym,val] of Object.entries(this.constants)) norm=sym.length>1?norm.replace(new RegExp(`\\b${sym}\\b`,'g'),`(${val})`):norm.replace(new RegExp(sym,'g'),`(${val})`);
+        let tokens=this.tokenize(norm);
+        return { original:expr, normalized:norm, tokens, time:performance.now()-start };
+      }
+      tokenize(e){ let tokens=[], i=0; while(i<e.length){ let ch=e[i]; if(/[\d.]/.test(ch)){ let num=''; while(i<e.length && /[\d.eE+-]/.test(e[i])) num+=e[i++]; tokens.push({type:'number',value:parseFloat(num)}); continue; } if('+-*/^%'.includes(ch)){ tokens.push({type:'operator',value:ch}); i++; continue; } if('()'.includes(ch)){ tokens.push({type:ch==='('?'lparen':'rparen',value:ch}); i++; continue; } if(ch===','){ tokens.push({type:'comma',value:ch}); i++; continue; } if(/[a-zA-Z∫∂∑∏√]/.test(ch)){ let name=''; while(i<e.length && /[a-zA-Z0-9∫∂∑∏√]/.test(e[i])) name+=e[i++]; if(this.calculus[name]||this.functions[name]) tokens.push({type:'function',value:name}); else tokens.push({type:'variable',value:name}); continue; } i++; } return tokens; }
+      buildAST(tokens){
+        let start=performance.now(), pos=0, peek=()=>tokens[pos], consume=()=>tokens[pos++];
+        let parseExpression=()=>parseAddSub();
+        let parseAddSub=()=>{ let left=parseMulDiv(); while(peek()&&peek().type==='operator'&&'+-'.includes(peek().value)){ let op=consume().value; let right=parseMulDiv(); left={type:'binary',op,left,right}; } return left; };
+        let parseMulDiv=()=>{ let left=parsePower(); while(peek()&&peek().type==='operator'&&'*/%'.includes(peek().value)){ let op=consume().value; let right=parsePower(); left={type:'binary',op,left,right}; } return left; };
+        let parsePower=()=>{ let left=parseUnary(); if(peek()&&peek().type==='operator'&&peek().value==='^'){ consume(); let right=parsePower(); return {type:'binary',op:'^',left,right}; } return left; };
+        let parseUnary=()=>{ if(peek()&&peek().type==='operator'&&'+-'.includes(peek().value)){ let op=consume().value; let operand=parseUnary(); return {type:'unary',op,operand}; } return parseCall(); };
+        let parseCall=()=>{ if(peek()&&peek().type==='function'){ let name=consume().value, args=[]; if(peek()&&peek().type==='lparen'){ consume(); if(peek()&&peek().type!=='rparen'){ args.push(parseExpression()); while(peek()&&peek().type==='comma'){ consume(); args.push(parseExpression()); } } if(peek()&&peek().type==='rparen') consume(); } return {type:'call',name,args}; } return parsePrimary(); };
+        let parsePrimary=()=>{ if(peek()&&peek().type==='number') return {type:'literal',value:consume().value}; if(peek()&&peek().type==='variable') return {type:'variable',name:consume().value}; if(peek()&&peek().type==='lparen'){ consume(); let expr=parseExpression(); if(peek()&&peek().type==='rparen') consume(); return expr; } return {type:'literal',value:0}; };
+        let ast=parseExpression(), depthFn=(node)=>{ if(!node)return 0; if(node.type==='literal'||node.type==='variable')return 1; if(node.type==='unary')return 1+depthFn(node.operand); if(node.type==='binary')return 1+Math.max(depthFn(node.left),depthFn(node.right)); if(node.type==='call')return 1+Math.max(...node.args.map(depthFn),0); return 1; };
+        this.metrics.astDepth=depthFn(ast);
+        return { ast, depth:this.metrics.astDepth, time:performance.now()-start };
+      }
+      compile(ast){
+        let start=performance.now(), generate=(node)=>{
+          if(!node) return '0';
+          if(node.type==='literal') return String(node.value);
+          if(node.type==='variable') return node.name;
+          if(node.type==='unary') return `(${node.op}${generate(node.operand)})`;
+          if(node.type==='binary'){ if(node.op==='^') return `Math.pow(${generate(node.left)}, ${generate(node.right)})`; return `(${generate(node.left)} ${node.op} ${generate(node.right)})`; }
+          if(node.type==='call'){
+            let args=node.args.map(generate);
+            if(this.calculus[node.name]){
+              if(['∫','∑','∏'].includes(node.name)) return `this.calculus['${node.name}']((x) => ${args[0].replace(/x/g,'x')}, ${args.slice(1).join(', ')})`;
+              if(['∂'].includes(node.name)) return `this.calculus['${node.name}']((x) => ${args[0]}, ${args[1]||0})`;
+            }
+            if(this.functions[node.name]) return `Math.${node.name}(${args.join(', ')})`;
+            return `${node.name}(${args.join(', ')})`;
+          }
+          return '0';
+        };
+        let jsCode=generate(ast); this.metrics.jsBytes=new Blob([jsCode]).size; this.metrics.operations++;
+        return { js:jsCode, bytes:this.metrics.jsBytes, time:performance.now()-start };
+      }
+      execute(jsCode){
+        let start=performance.now();
+        try{ let fn=new Function('x','n','ctx',`with(Math){ return ${jsCode}; }`); let res=fn(0,0,this); return { result:res, time:performance.now()-start, success:true }; }
+        catch(e){ return { result:NaN, error:e.message, time:performance.now()-start, success:false }; }
+      }
+      async process(expr,cb={}){
+        let p1=this.parse(expr); if(cb.onParse) cb.onParse(p1); if(cb.onPhase) cb.onPhase('parse','complete');
+        let p2=this.buildAST(p1.tokens); if(cb.onAST) cb.onAST(p2); if(cb.onPhase) cb.onPhase('ast','complete');
+        let p3=this.compile(p2.ast); if(cb.onCompile) cb.onCompile(p3); if(cb.onPhase) cb.onPhase('compile','complete');
+        let p4=this.execute(p3.js); if(cb.onExecute) cb.onExecute(p4); if(cb.onPhase) cb.onPhase('execute','complete');
+        let total=performance.now()-p1.time-p2.time-p3.time-p4.time+performance.now();
+        let metrics={ parseTime:p1.time, astTime:p2.time, compileTime:p3.time, executeTime:p4.time, totalTime:total, astDepth:this.metrics.astDepth, jsBytes:this.metrics.jsBytes };
+        return { input:expr, result:p4.result, js:p3.js, ast:p2.ast, metrics };
+      }
+      delay(ms){ return new Promise(r=>setTimeout(r,ms)); }
+    }
+
+    // ---------- MATHML CONVERTER (simple but expressive) ----------
+    function expressionToMathML(expr){
+      let mathml = `<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow>`;
+      let safe = expr.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+      safe = safe.replace(/∫\(/g,'∫(').replace(/∂\(/g,'∂(').replace(/∑\(/g,'∑(');
+      let tokens = safe.split(/([+\-*/^()∫∂∑∏,])/);
+      for(let tok of tokens){
+        if(!tok) continue;
+        if(/^[+\-*/^,()]$/.test(tok)) mathml += `<mo>${tok}</mo>`;
+        else if(/^\d+(\.\d+)?$/.test(tok)) mathml += `<mn>${tok}</mn>`;
+        else if(/^(sin|cos|tan|log|ln|exp|sqrt)$/.test(tok)) mathml += `<mrow><mi>${tok}</mi><mo>&#x2061;</mo></mrow>`;
+        else if(tok==='π') mathml += `<mi>π</mi>`;
+        else if(tok==='e') mathml += `<mi>e</mi>`;
+        else if(tok==='x'||tok==='n'||tok==='i') mathml += `<mi>${tok}</mi>`;
+        else mathml += `<mi mathvariant="italic">${tok}</mi>`;
+      }
+      mathml += `</mrow></math>`;
+      return mathml;
+    }
+
+    // UI binding
+    const engine = new KuhulMathEngine();
+    const mathInput = document.getElementById('mathInput');
+    const executeBtn = document.getElementById('executeBtn');
+    const resultSection = document.getElementById('resultSection');
+    const mathmlPreview = document.getElementById('mathmlPreview');
+    const mathmlContainer = document.getElementById('mathmlContainer');
+
+    const stages = { parse:document.getElementById('stage-parse'), ast:document.getElementById('stage-ast'), compile:document.getElementById('stage-compile'), execute:document.getElementById('stage-execute'), render:document.getElementById('stage-render') };
+    const details = { parse:document.getElementById('parse-detail'), ast:document.getElementById('ast-detail'), compile:document.getElementById('compile-detail'), execute:document.getElementById('execute-detail'), render:document.getElementById('render-detail') };
+    const times = { parse:document.getElementById('parse-time'), ast:document.getElementById('ast-time'), compile:document.getElementById('compile-time'), execute:document.getElementById('execute-time'), render:document.getElementById('render-time') };
+    const kuhulValues = { wo:document.getElementById('wo-value'), sek1:document.getElementById('sek1-value'), sek2:document.getElementById('sek2-value'), sek3:document.getElementById('sek3-value'), chen:document.getElementById('chen-value') };
+
+    function resetStages(){
+      Object.values(stages).forEach(s=>s.classList.remove('active','complete'));
+      Object.values(details).forEach(d=>d.textContent='Waiting...');
+      Object.values(times).forEach(t=>t.textContent='—');
+      resultSection.style.display='none';
+      mathmlPreview.style.display='none';
+    }
+
+    async function executeExpression(){
+      let expr=mathInput.value.trim();
+      if(!expr) return;
+      resetStages();
+      executeBtn.disabled=true;
+      kuhulValues.wo.textContent=`"${expr}"`;
+      document.getElementById('line-wo').classList.add('highlight');
+      
+      // Show MathML preview instantly based on expression
+      let mathmlCode = expressionToMathML(expr);
+      mathmlContainer.innerHTML = mathmlCode;
+      mathmlPreview.style.display = 'block';
+      
+      const result = await engine.process(expr, {
+        onPhase:(phase,state)=>{ if(state==='active') stages[phase]?.classList.add('active'); else if(state==='complete'){ stages[phase]?.classList.remove('active'); stages[phase]?.classList.add('complete'); } },
+        onParse:(data)=>{ details.parse.textContent=`${data.tokens.length} tokens`; times.parse.textContent=`${data.time.toFixed(2)}ms`; kuhulValues.sek1.textContent=`tokens[${data.tokens.length}]`; document.getElementById('line-sek1').classList.add('highlight'); },
+        onAST:(data)=>{ details.ast.textContent=`Depth: ${data.depth}`; times.ast.textContent=`${data.time.toFixed(2)}ms`; document.getElementById('metricDepth').textContent=data.depth; },
+        onCompile:(data)=>{ details.compile.textContent=`${data.bytes} bytes JS`; times.compile.textContent=`${data.time.toFixed(2)}ms`; document.getElementById('jsCode').innerHTML=data.js.replace(/\b(Math|return|const|let|var|function)\b/g,'<span class="js-keyword">$1</span>').replace(/\b(pow|sqrt|sin|cos|tan|log|exp|abs|floor|ceil|round)\b/g,'<span class="js-function">$1</span>').replace(/(\d+\.?\d*)/g,'<span class="js-number">$1</span>'); kuhulValues.sek2.textContent=`js[${data.bytes}b]`; document.getElementById('line-sek2').classList.add('highlight'); document.getElementById('metricBytes').textContent=data.bytes; },
+        onExecute:(data)=>{ details.execute.textContent=data.success?'Success':`Error: ${data.error}`; times.execute.textContent=`${data.time.toFixed(2)}ms`; kuhulValues.sek3.textContent=data.success?'executed':'error'; document.getElementById('line-sek3').classList.add('highlight'); }
+      });
+      details.render.textContent='Displayed + MathML';
+      times.render.textContent=`${(result.metrics.totalTime - result.metrics.executeTime).toFixed(2)}ms`;
+      let val = isNaN(result.result) ? 'NaN' : (Math.abs(result.result)<1e-10?0:result.result).toPrecision(10);
+      document.getElementById('resultValue').textContent = val;
+      document.getElementById('totalTime').textContent = result.metrics.totalTime.toFixed(2);
+      resultSection.style.display = 'block';
+      kuhulValues.chen.textContent = val;
+      document.getElementById('line-chen').classList.add('highlight');
+      document.getElementById('metricOps').textContent=engine.metrics.operations;
+      let exprBytes=new Blob([expr]).size, ratio=(engine.metrics.jsBytes/exprBytes).toFixed(1);
+      document.getElementById('metricRatio').textContent=`${ratio}x`;
+      executeBtn.disabled=false;
+      setTimeout(()=>document.querySelectorAll('.kuhul-line').forEach(l=>l.classList.remove('highlight')),2000);
+    }
+
+    executeBtn.addEventListener('click',executeExpression);
+    mathInput.addEventListener('keypress',e=>{ if(e.key==='Enter') executeExpression(); });
+    document.querySelectorAll('.math-glyph').forEach(g=>{ g.addEventListener('click',()=>{ mathInput.value+=g.dataset.symbol; mathInput.focus(); document.querySelectorAll('.math-glyph').forEach(gg=>gg.classList.remove('active')); g.classList.add('active'); }); });
+    document.querySelectorAll('.expr-item').forEach(item=>{ item.addEventListener('click',()=>{ mathInput.value=item.dataset.expr; executeExpression(); }); });
+    document.querySelectorAll('.hint-chip').forEach(chip=>{ chip.addEventListener('click',()=>{ mathInput.value+=chip.dataset.hint; mathInput.focus(); }); });
+    mathInput.value='sin(π/4) + cos(π/4)';
+    executeExpression();
+  </script>
+</body>
+</html>
