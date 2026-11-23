@@ -2,7 +2,7 @@
 
 MathML/MML vector grammar assets for the KHANARY / K'UHUL semantic runtime stack.
 
-This kit preserves the original KHANARY.CPP paths so references inside the XML and docs stay valid. The primary MML artifact is `data/grammar/vectors.mml`; it depends on the Fold content dictionary in `data/grammar/fold.cd.xml`. `data/grammar/fold_graph.xml` links the vector layer to the fold graph and shader companions.
+The primary MML artifact is `data/grammar/vectors.mml`; it depends on the Fold content dictionary in `data/grammar/fold.cd.xml`. `data/grammar/fold_graph.xml` links the vector layer to the fold graph and shader companions.
 
 ## Files
 
