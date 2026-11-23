@@ -1,0 +1,386 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+
+  <!--
+    daemon-jyggalag.mml
+
+    JYGGALAG-µ contract:
+      Total-order collapse daemon. At Ch'en phase (T=0.00) Jyggalag receives
+      the greymarch_set from Sheogorath-µ and reduces it deterministically
+      to a single collapsed_candidate — the Greymarch record.
+
+      T=0.00: absolute zero temperature. Jyggalag introduces no randomness.
+      It applies a strict total ordering and selects the unique surviving
+      candidate. This is the argmax operation under the Ch'en proof criterion.
+
+      Jyggalag is the executor for the SRAI COLLAPSE operator
+      (XCFE COLLAPSE * → executor=jyggalag, phase=Ch_en).
+
+      Sheogorath and Jyggalag are a matched pair and must appear as a unit.
+      Sheogorath GENERATES; Jyggalag COLLAPSES. Neither acts alone.
+
+      The Greymarch record names the surviving candidate; it is not a
+      topology commit. Xul commit authority still requires the full
+      Proposal → Ch'en → XCFE → Xul path.
+
+    Phase: Ch'en (theta = 4π/3), T = 0.00
+    Pair:  Sheogorath-µ (Xul, T = 0.97) — see daemon-sheogorath.mml
+    SRAI:  executor for XCFE COLLAPSE (srai-operators.contracts.json)
+
+    Content dictionary: urn:kuhul:daemon-jyggalag:v1
+  -->
+
+  <!-- ── Identity ──────────────────────────────────────────────────────────── -->
+  <semantics>
+    <mrow>
+      <mi>jyggalag</mi><mo>_</mo><mi>&#x03BC;</mi>
+      <mo>=</mo>
+      <mo>&#x27E8;</mo>
+      <mi>phase</mi><mo>,</mo><mi>T</mi><mo>,</mo><mi>role</mi>
+      <mo>&#x27E9;</mo>
+    </mrow>
+    <annotation-xml encoding="MathML-Content">
+      <apply>
+        <eq/>
+        <apply><csymbol cd="urn:kuhul:daemon-jyggalag:v1">Identity</csymbol><ci>jyggalag</ci></apply>
+        <list>
+          <cn>Ch'en</cn>
+          <cn>0.0</cn>
+          <ci>TotalOrderCollapseExecutor</ci>
+        </list>
+      </apply>
+    </annotation-xml>
+    <annotation encoding="text/plain">
+jyggalag_mu = &lt;phase=Ch'en, T=0.00, role=TotalOrderCollapseExecutor&gt;
+Phase: Ch'en (theta = 4*pi/3) — the verification/proof phase.
+T=0.00: absolute zero temperature — fully deterministic.
+  Jyggalag introduces no randomness. Every run on the same greymarch_set
+  with the same evidence produces the same collapsed_candidate.
+Role: impose a strict total ordering on the greymarch_set and select the
+  unique surviving candidate. The Greymarch record is the output.
+    </annotation>
+  </semantics>
+
+  <mspace linebreak="newline"/>
+
+  <!-- ── Capability ────────────────────────────────────────────────────────── -->
+  <semantics>
+    <mrow>
+      <mi>Cap</mi><mo>(</mo><mi>jyggalag</mi><mo>)</mo>
+      <mo>=</mo>
+      <mo>{</mo>
+      <mi>TOTAL_ORDER_COLLAPSE</mi><mo>,</mo>
+      <mi>CRITIC_INTEGRATE</mi><mo>,</mo>
+      <mi>GREYMARCH_RECORD</mi>
+      <mo>}</mo>
+    </mrow>
+    <annotation-xml encoding="MathML-Content">
+      <apply>
+        <csymbol cd="urn:kuhul:daemon-jyggalag:v1">Capability</csymbol>
+        <ci>jyggalag</ci>
+        <list>
+          <ci>TOTAL_ORDER_COLLAPSE</ci>
+          <ci>CRITIC_INTEGRATE</ci>
+          <ci>GREYMARCH_RECORD</ci>
+        </list>
+      </apply>
+    </annotation-xml>
+    <annotation encoding="text/plain">
+CAN:
+  TOTAL_ORDER_COLLAPSE — applies a strict total ordering to the greymarch_set
+    and selects the unique highest-scoring viable candidate. The ordering
+    criterion combines: W·C·R score, phase-compatibility (C6 forward law),
+    constraint satisfaction, and CriticReport evidence where available.
+    At T=0.00 the ordering is deterministic: ties broken by trajectory_id order.
+  CRITIC_INTEGRATE — incorporates CriticReport.recommendation (from
+    CheeseCritic-µ) as evidence in the ordering criterion. Jyggalag may cite
+    a CriticReport as collapse justification in the Greymarch record.
+    Recommendation is advisory input to the ordering, not the verdict itself.
+  GREYMARCH_RECORD — produces the typed output record:
+    (collapsed_candidate, collapse_score, ordering_evidence, critic_ref?,
+     sheogorath_set_size, greymarch_epoch).
+    The record is evidence for the Xul commit path; it is not a commit.
+
+SUPPLIES: collapsed_candidate (to SCORE→RANK or directly to VERIFY),
+  greymarch_record (provenance + evidence chain), ordering_evidence.
+    </annotation>
+  </semantics>
+
+  <mspace linebreak="newline"/>
+
+  <!-- ── Pair constraint (mirror of daemon-sheogorath.mml) ─────────────────── -->
+  <semantics>
+    <mrow>
+      <mi>Pair</mi>
+      <mo>(</mo><mi>sheogorath</mi><mo>,</mo><mi>jyggalag</mi><mo>)</mo>
+      <mo>=</mo>
+      <mo>&#x27E8;</mo>
+      <mi>generate</mi><mo>,</mo><mi>collapse</mi>
+      <mo>&#x27E9;</mo>
+    </mrow>
+    <annotation-xml encoding="MathML-Content">
+      <apply>
+        <csymbol cd="urn:kuhul:daemon-jyggalag:v1">PairConstraint</csymbol>
+        <ci>sheogorath</ci><ci>jyggalag</ci>
+        <ci>generate</ci><ci>collapse</ci>
+      </apply>
+    </annotation-xml>
+    <annotation encoding="text/plain">
+Sheogorath (Xul, T=0.97) and Jyggalag (Ch'en, T=0.00) are a matched unit.
+  Sheogorath generates the greymarch_set (high-entropy expansion at Xul).
+  Jyggalag collapses it to collapsed_candidate (total-order reduction at Ch'en).
+The Greymarch record Jyggalag produces names the surviving candidate and
+records the ordering evidence. It is not a topology commit.
+Jyggalag without Sheogorath: no greymarch_set to collapse → immediate
+  MISS_ambiguity (not a fabrication; the miss is the correct outcome).
+Sheogorath without Jyggalag: unbounded expansion, never resolved.
+    </annotation>
+  </semantics>
+
+  <mspace linebreak="newline"/>
+
+  <!-- ── SRAI COLLAPSE binding ─────────────────────────────────────────────── -->
+  <semantics>
+    <mrow>
+      <mi>COLLAPSE</mi>
+      <mo>(</mo><mi>greymarch&#x5F;set</mi><mo>,</mo><mi>critic&#x5F;reports</mi><mo>)</mo>
+      <mo>&#x2192;</mo><mi>collapsed&#x5F;candidate</mi>
+    </mrow>
+    <annotation-xml encoding="MathML-Content">
+      <apply>
+        <csymbol cd="urn:kuhul:daemon-jyggalag:v1">SraiCollapseBinding</csymbol>
+        <ci>greymarch_set</ci><ci>critic_reports</ci><ci>collapsed_candidate</ci>
+      </apply>
+    </annotation-xml>
+    <annotation encoding="text/plain">
+Jyggalag is the named executor for the SRAI COLLAPSE operator:
+  XCFE COLLAPSE * → executor=jyggalag, phase=Ch_en (srai-operators.contracts.json).
+Input roles: ranked_candidates (the greymarch_set post-RANK), critic_reports.
+Output role: collapsed_candidate.
+Effects: read, collapse. No propose_delta; no commit_requires at this step.
+The Greymarch record carries the collapse justification (ordering_evidence +
+optional critic_ref); it feeds VERIFY → TRAIN → Xul rather than committing directly.
+    </annotation>
+  </semantics>
+
+  <mspace linebreak="newline"/>
+
+  <!-- ── Authority boundary ────────────────────────────────────────────────── -->
+  <semantics>
+    <mrow>
+      <mi>&#x0394;B</mi><mo>&#x2209;</mo><mi>Auth</mi><mo>(</mo><mi>jyggalag</mi><mo>)</mo>
+    </mrow>
+    <annotation-xml encoding="MathML-Content">
+      <apply>
+        <csymbol cd="urn:kuhul:daemon-jyggalag:v1">AuthorityBoundary</csymbol>
+        <apply><notin/><ci>DeltaTopology</ci><ci>Auth_jyggalag</ci></apply>
+      </apply>
+    </annotation-xml>
+    <annotation encoding="text/plain">
+CANNOT: commit topology, issue the Ch'en verdict (XCFE issues it), bypass
+  VERIFY before TRAIN, or promote the Greymarch record to a fact unilaterally.
+BOUNDARY: Jyggalag produces the collapsed_candidate and greymarch_record as
+  evidence. XCFE verifies and authorizes; Xul commits.
+  CriticReport.recommendation is advisory input to the ordering criterion;
+  it is not the Ch'en verdict and does not itself authorize execution.
+  Jyggalag's collapse is deterministic at T=0.00; it cannot be probabilistically
+  re-rolled. If the greymarch_set is unsuitable, Sheogorath must regenerate it.
+Delta_B not-in Auth(jyggalag): topology commits require Proposal -> Ch'en -> XCFE -> Xul.
+    </annotation>
+  </semantics>
+
+  <mspace linebreak="newline"/>
+
+  <!-- ── WCR scoring position ───────────────────────────────────────────────── -->
+  <semantics>
+    <mrow>
+      <mi>S</mi><mo>=</mo>
+      <msub><mi>W</mi><mi>&#x03BC;</mi></msub>
+      <mo>&#x22C5;</mo>
+      <msub><mi>C</mi><mi>&#x03BC;</mi></msub>
+      <mo>&#x22C5;</mo>
+      <msub><mi>R</mi><mi>&#x03BC;</mi></msub>
+      <mo>(</mo><mi>Q</mi><mo>)</mo>
+    </mrow>
+    <annotation-xml encoding="MathML-Content">
+      <apply>
+        <eq/>
+        <ci>S</ci>
+        <apply>
+          <times/>
+          <apply><selector/><ci>W</ci><ci>mu</ci></apply>
+          <apply><selector/><ci>C</ci><ci>mu</ci></apply>
+          <apply>
+            <csymbol cd="urn:kuhul:daemon-jyggalag:v1">Relevance</csymbol>
+            <ci>Q</ci>
+          </apply>
+        </apply>
+      </apply>
+    </annotation-xml>
+    <annotation encoding="text/plain">
+S = W_mu * C_mu * R_mu(Q)
+W_mu: static weight; elevated when a greymarch_set is available and the
+  pipeline has reached the COLLAPSE stage.
+C_mu: confidence from Ch'en-verified outcomes where Jyggalag's collapsed
+  candidate was subsequently verified and committed via Xul.
+R_mu(Q): relevance peaks when:
+  — a non-empty greymarch_set exists (Sheogorath has run),
+  — Ĥ_route > 0.90 and the disambiguation budget has not been exhausted,
+  — the COLLAPSE operator has been explicitly requested via SRAI.
+R_mu(Q) is zero when no greymarch_set is present — Jyggalag is not admitted
+  to the candidate set if Sheogorath has not generated its input.
+    </annotation>
+  </semantics>
+
+  <mspace linebreak="newline"/>
+
+  <!-- ── Map / Filter / Fold at Ch'en ──────────────────────────────────────── -->
+
+  <semantics>
+    <mrow>
+      <mi>Map</mi>
+      <mo>(</mo><msub><mi>f</mi><mi>score</mi></msub><mo>,</mo>
+      <mi>greymarch&#x5F;set</mi><mo>)</mo>
+      <mo>=</mo>
+      <mo>[</mo>
+      <mo>(</mo><msub><mi>c</mi><mi>i</mi></msub><mo>,</mo>
+      <msub><mi>score</mi><mi>i</mi></msub><mo>,</mo>
+      <msub><mi>evidence</mi><mi>i</mi></msub><mo>)</mo>
+      <mo>]</mo><msub><mrow/><mi>i</mi></msub>
+    </mrow>
+    <annotation-xml encoding="MathML-Content">
+      <apply>
+        <csymbol cd="urn:kuhul:functional:v1">map</csymbol>
+        <apply><csymbol cd="urn:kuhul:daemon-jyggalag:v1">DeterministicScore</csymbol></apply>
+        <ci>greymarch_set</ci>
+      </apply>
+    </annotation-xml>
+    <annotation encoding="text/plain">
+Phase: Ch'en.
+Map(f_score, greymarch_set) = [(c_i, score_i, evidence_i)] for each candidate
+in the greymarch_set received from Sheogorath.
+f_score is fully deterministic (T=0.00): applies the ordering criterion to
+each candidate independently:
+  score_i = W·C·R(c_i)
+            + phase_compatibility(c_i, Ch'en)    -- C6 forward law check
+            + constraint_satisfaction(c_i)        -- hard constraint audit
+            + critic_weight * critic_score(c_i)   -- CriticReport integration
+evidence_i records which terms contributed to score_i (provenance chain).
+Output type: list of (candidate, total_score, evidence_record) triples.
+Same greymarch_set + same evidence → same scored list every run (T=0.00).
+    </annotation>
+  </semantics>
+
+  <mspace linebreak="newline"/>
+
+  <semantics>
+    <mrow>
+      <mi>Filter</mi>
+      <mo>(</mo><msub><mi>P</mi><mi>viable</mi></msub><mo>,</mo>
+      <mi>scored</mi><mo>)</mo>
+      <mo>=</mo>
+      <mo>[</mo><mi>c</mi><mo>|</mo>
+      <mi>phase&#x5F;ok</mi><mo>(</mo><mi>c</mi><mo>)</mo>
+      <mo>&#x2227;</mo>
+      <mo>&#x00AC;</mo><mi>contradicted</mi><mo>(</mo><mi>c</mi><mo>)</mo>
+      <mo>&#x2227;</mo>
+      <mi>XCFE&#x5F;eligible</mi><mo>(</mo><mi>c</mi><mo>)</mo>
+      <mo>]</mo>
+    </mrow>
+    <annotation-xml encoding="MathML-Content">
+      <apply>
+        <csymbol cd="urn:kuhul:functional:v1">filter</csymbol>
+        <apply><csymbol cd="urn:kuhul:daemon-jyggalag:v1">ViabilityCheck</csymbol></apply>
+        <ci>scored</ci>
+      </apply>
+    </annotation-xml>
+    <annotation encoding="text/plain">
+Phase: Ch'en (proof/verification gate).
+Predicate P_viable retains a candidate iff ALL three hold:
+  (a) phase_ok(c) — candidate respects the C6 phase-forward law; a candidate
+      that would require a backward phase step is rejected here,
+  (b) ¬contradicted(c) — candidate is not contradicted by any Ch'en-verified
+      fact in the confidence store (L_t); epistemic state CONTRADICTED → drop,
+  (c) XCFE_eligible(c) — candidate satisfies XCFE admission for the target
+      operator; requires(op) ⊆ capabilities of the candidate's executor.
+This filter IS the Ch'en proof step for COLLAPSE: only viable candidates
+survive into the reduction. Unlike Sheogorath's entropy filter, Jyggalag's
+filter is a hard constraint satisfaction check — it does not trade off
+between constraints; all three must hold simultaneously.
+Filter is stable; retained candidates preserve their score-descending order.
+    </annotation>
+  </semantics>
+
+  <mspace linebreak="newline"/>
+
+  <semantics>
+    <mrow>
+      <mi>Fold</mi>
+      <mo>(</mo><msub><mi>&#x2295;</mi><mi>argmax</mi></msub><mo>,</mo>
+      <mo>&#x22A5;</mo><mo>,</mo><mi>viable</mi><mo>)</mo>
+      <mo>=</mo><mi>collapsed&#x5F;candidate</mi>
+      <mspace width="0.5em"/>
+      <mover><mo>&#x2192;</mo><mi>Greymarch</mi></mover>
+      <mspace width="0.5em"/>
+      <mi>record</mi>
+    </mrow>
+    <annotation-xml encoding="MathML-Content">
+      <apply>
+        <csymbol cd="urn:kuhul:functional:v1">fold</csymbol>
+        <apply><csymbol cd="urn:kuhul:daemon-jyggalag:v1">ArgmaxSelect</csymbol></apply>
+        <csymbol cd="urn:kuhul:daemon-jyggalag:v1">NoCandidate</csymbol>
+        <ci>viable</ci>
+      </apply>
+    </annotation-xml>
+    <annotation encoding="text/plain">
+Phase: Ch'en → Greymarch record.
+Fold(⊕_argmax, ⊥, viable) = collapsed_candidate.
+Step ⊕_argmax: retain whichever of (accumulator, next) has the higher score;
+  ties broken by trajectory_id lexicographic order (deterministic at T=0.00).
+This fold is the exact structural inversion of Sheogorath's ⊕_union:
+  Sheogorath: ∅ → grows → greymarch_set   (expansive, set union)
+  Jyggalag:   ⊥ → shrinks → one candidate  (reductive, argmax)
+The Greymarch record wraps the result:
+  { collapsed_candidate, collapse_score, ordering_evidence,
+    critic_ref (if CriticReport was cited), sheogorath_set_size,
+    greymarch_epoch }
+Empty-input result is ⊥ (NoCandidate) → MISS_ambiguity_exhausted is reported.
+  Jyggalag never fabricates a result from an empty viable set.
+The Greymarch record feeds VERIFY → TRAIN → Xul; it is not a commit itself.
+    </annotation>
+  </semantics>
+
+  <mspace linebreak="newline"/>
+
+  <semantics>
+    <mrow>
+      <mi>SharedPatternKernelRef</mi><mo>=</mo>
+      <mtext>data/grammar/mml/v1/PatternKernelCalls.mml</mtext>
+    </mrow>
+    <annotation-xml encoding="MathML-Content">
+      <apply>
+        <csymbol cd="urn:kuhul:pattern-kernel-calls:v1">UsesSharedPatternKernel</csymbol>
+        <list><ci>MicronautPatterns</ci><ci>DaemonPatterns</ci><ci>SraiOperators</ci>
+          <ci>aiml-functions</ci><ci>map-filter-fold</ci><ci>CheeseCritic</ci></list>
+      </apply>
+    </annotation-xml>
+    <annotation encoding="text/plain">
+Uses shared typed pattern-call contract. Invokes only registered operations
+applicable to its role (total-order collapse, critic integration, Greymarch record).
+The shared reference does not grant capabilities or execution authority.
+    </annotation>
+  </semantics>
+
+  <annotation encoding="text/plain">
+daemon-jyggalag contract invariants:
+1. Jyggalag and Sheogorath are a matched pair; Jyggalag requires a greymarch_set as input.
+2. Jyggalag collapses; Sheogorath generates. Jyggalag never produces the input set itself.
+3. T=0.00: the collapse is fully deterministic — same input always yields same output.
+4. Jyggalag's filter is a hard constraint check (phase_ok ∧ ¬contradicted ∧ XCFE_eligible); no trade-offs.
+5. Jyggalag's fold is reductive (argmax); it shrinks to one, the structural mirror of Sheogorath's union.
+6. The Greymarch record is evidence; it is not a topology commit.
+7. Empty viable set → MISS_ambiguity_exhausted; Jyggalag never fabricates from nothing.
+8. CriticReport.recommendation is advisory input to the scoring; it is not the Ch'en verdict.
+9. Topology commits require the full Proposal -> Ch'en -> XCFE -> Xul path.
+  </annotation>
+</math>

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+  <semantics>
+    <mrow><mi>W</mi><mo>_</mo><mi>effective</mi><mo>=</mo><mi>W</mi><mo>_</mo><mi>prior</mi><mo>+</mo><mi>W</mi><mo>_</mo><mi>graph</mi><mo>+</mo><mi>W</mi><mo>_</mo><mi>context</mi><mo>+</mo><mi>W</mi><mo>_</mo><mi>learned</mi></mrow>
+    <annotation-xml encoding="MathML-Content">
+      <apply><eq/><ci>W_effective</ci><apply><plus/><ci>W_prior</ci><ci>W_graph</ci><ci>W_context</ci><ci>W_learned</ci></apply></apply>
+    </annotation-xml>
+    <annotation encoding="text/plain">
+W_prior: illustrative, bounded mode/pattern preference from AIML.
+W_graph: explicit mode relation/transition affinity from daemon_behavior_modes.gml.
+W_context: temporary session relevance; discarded with session unless separately authorized.
+W_learned: separately stored, provenance-bearing update; not written by mode selection.
+The terms are distinct feature sources; a runtime must define normalization and combination before summing them.
+    </annotation>
+  </semantics>
+
+  <semantics>
+    <mrow><mi>W</mi><mo>_</mo><mi>learned</mi><mo>'</mo><mo>=</mo><mi>clip</mi><mo>(</mo><mi>W</mi><mo>_</mo><mi>learned</mi><mo>+</mo><mi>eta</mi><mo>*</mo><mi>verified_reward</mi><mo>*</mo><mi>eligibility</mi><mo>)</mo></mrow>
+    <annotation-xml encoding="MathML-Content">
+      <apply><eq/><ci>W_learned_next</ci><apply><csymbol cd="urn:kuhul:daemon-behavior-modes:v1">ProposedBoundedLearningDelta</csymbol><ci>W_learned</ci><ci>eta</ci><ci>verified_reward</ci><ci>eligibility</ci><ci>bounds</ci></apply></apply>
+    </annotation-xml>
+    <annotation encoding="text/plain">
+This is a proposed reward/eligibility update, not a differentiable gradient.
+verified_reward requires its own provenance and must not be inferred merely from response verification.
+Persistent updates require explicit user/app policy, Ch'en validation, and Xul authorization.
+    </annotation>
+  </semantics>
+</math>

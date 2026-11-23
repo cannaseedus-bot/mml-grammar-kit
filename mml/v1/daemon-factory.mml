@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+
+  <!--
+    daemon-factory.mml
+
+    FACTORY-µ contract:
+      Auto-factory spawns and evolves new micronauts from capability gaps.
+      Auto-factory cannot create micronauts without a valid capability gap.
+
+    Content dictionary used here: urn:kuhul:daemon-factory:v1
+  -->
+
+  <!-- ── Identity ──────────────────────────────────────────────────────────── -->
+  <semantics>
+    <mrow>
+      <mi>factory</mi>
+      <mo>_</mo>
+      <mi>&#x03BC;</mi>
+      <mo>=</mo>
+      <mo>&#x27E8;</mo>
+      <mi>phase</mi><mo>,</mo>
+      <mi>T</mi><mo>,</mo>
+      <mi>role</mi>
+      <mo>&#x27E9;</mo>
+    </mrow>
+    <annotation-xml encoding="MathML-Content">
+      <apply>
+        <eq/>
+        <apply><csymbol cd="urn:kuhul:daemon-factory:v1">Identity</csymbol><ci>factory</ci></apply>
+        <list>
+          <cn>Pop</cn>
+          <cn>0.7</cn>
+          <ci>role</ci>
+        </list>
+      </apply>
+    </annotation-xml>
+    <annotation encoding="text/plain">
+factory_mu = &lt;phase=Pop, T=0.7, role&gt;
+Role: Auto-factory — spawns and evolves new micronauts from capability gaps
+Phase angle: theta = 0
+    </annotation>
+  </semantics>
+
+  <mspace linebreak="newline" indentalign="center"/>
+
+  <!-- ── Capability ────────────────────────────────────────────────────────── -->
+  <semantics>
+    <mrow>
+      <mi>Cap</mi>
+      <mo>(</mo><mi>factory</mi><mo>)</mo>
+      <mo>=</mo>
+      <mi>GRANTED</mi>
+    </mrow>
+    <annotation-xml encoding="MathML-Content">
+      <apply>
+        <csymbol cd="urn:kuhul:daemon-factory:v1">Capability</csymbol>
+        <ci>factory</ci>
+        <ci>granted</ci>
+      </apply>
+    </annotation-xml>
+    <annotation encoding="text/plain">
+CAN: Auto-factory spawns and evolves new micronauts from capability gaps.
+SUPPLIES: Provides phase and WCR data to other daemons.
+    </annotation>
+  </semantics>
+
+  <mspace linebreak="newline" indentalign="center"/>
+
+  <!-- ── Authority boundary ────────────────────────────────────────────────── -->
+  <semantics>
+    <mrow>
+      <mi>&#x0394;B</mi>
+      <mo>&#x2209;</mo>
+      <mi>Auth</mi>
+      <mo>(</mo><mi>factory</mi><mo>)</mo>
+    </mrow>
+    <annotation-xml encoding="MathML-Content">
+      <apply>
+        <csymbol cd="urn:kuhul:daemon-factory:v1">AuthorityBoundary</csymbol>
+        <apply><notin/><ci>DeltaTopology</ci><ci>Auth_factory</ci></apply>
+      </apply>
+    </annotation-xml>
+    <annotation encoding="text/plain">
+CANNOT: Auto-factory cannot create micronauts without a valid capability gap.
+BOUNDARY: Auto-factory does not have access to the Ch'en verdict or topology authority.
+Delta_B not-in Auth(factory): topology commits require Proposal -&gt; Ch'en -&gt; XCFE -&gt; Xul.
+    </annotation>
+  </semantics>
+
+  <mspace linebreak="newline" indentalign="center"/>
+
+  <!-- ── WCR scoring position ───────────────────────────────────────────────── -->
+  <semantics>
+    <mrow>
+      <mi>S</mi>
+      <mo>=</mo>
+      <msub><mi>W</mi><mi>&#x03BC;</mi></msub>
+      <mo>&#x22C5;</mo>
+      <msub><mi>C</mi><mi>&#x03BC;</mi></msub>
+      <mo>&#x22C5;</mo>
+      <msub><mi>R</mi><mi>&#x03BC;</mi></msub>
+      <mo>(</mo><mi>Q</mi><mo>)</mo>
+    </mrow>
+    <annotation-xml encoding="MathML-Content">
+      <apply>
+        <eq/>
+        <ci>S</ci>
+        <apply>
+          <times/>
+          <apply><selector/><ci>W</ci><ci>mu</ci></apply>
+          <apply><selector/><ci>C</ci><ci>mu</ci></apply>
+          <apply>
+            <csymbol cd="urn:kuhul:daemon-factory:v1">Relevance</csymbol>
+            <ci>Q</ci>
+          </apply>
+        </apply>
+      </apply>
+    </annotation-xml>
+    <annotation encoding="text/plain">
+S = W_mu * C_mu * R_mu(Q)
+W_mu: static weight for factory in its capability family.
+C_mu: confidence earned through Ch'en-verified outcomes.
+R_mu(Q): query-relevance score at phase Pop (T=0.7).
+Eligibility: factory is admitted to the candidate set only when requires(op) subset-of capabilities(factory).
+    </annotation>
+  </semantics>
+
+  <semantics>
+    <mrow>
+      <mi>SharedPatternKernelRef</mi><mo>=</mo>
+      <mtext>data/grammar/PatternKernelCalls.mml</mtext>
+    </mrow>
+    <annotation-xml encoding="MathML-Content">
+      <apply>
+        <csymbol cd="urn:kuhul:pattern-kernel-calls:v1">UsesSharedPatternKernel</csymbol>
+        <list><ci>MicronautPatterns</ci><ci>DaemonPatterns</ci><ci>SraiOperators</ci>
+          <ci>aiml-functions</ci><ci>map-filter-fold</ci><ci>CheeseCritic</ci></list>
+      </apply>
+    </annotation-xml>
+    <annotation encoding="text/plain">
+This daemon/Micronaut uses the shared typed pattern-call contract. It invokes
+only registered operations applicable to its role, phase, context, and scope;
+the shared reference does not grant capabilities or execution authority.
+    </annotation>
+  </semantics>
+
+  <semantics>
+    <mrow>
+      <mi>FactoryPatternInduction</mi><mo>(</mo><mi>context</mi><mo>,</mo>
+      <mi>capabilityGap</mi><mo>,</mo><mi>sourcePatterns</mi><mo>,</mo><mi>evidence</mi><mo>)</mo>
+      <mo>&#x2192;</mo><mo>&#x27E8;</mo><mi>PatternProposal</mi><mo>,</mo><mi>structuralDelta</mi><mo>,</mo><mi>lineage</mi><mo>&#x27E9;</mo>
+    </mrow>
+    <annotation-xml encoding="MathML-Content">
+      <apply>
+        <csymbol cd="urn:kuhul:pattern-kernel-calls:v1">FactoryPatternInduction</csymbol>
+        <ci>context</ci><ci>capabilityGap</ci><ci>sourcePatterns</ci><ci>evidence</ci>
+        <list><ci>PatternProposal</ci><ci>structuralDelta</ci><ci>lineage</ci></list>
+      </apply>
+    </annotation-xml>
+    <annotation encoding="text/plain">
+FACTORY-µ treats a new context as a source of pattern candidates. It compares
+each candidate with existing patterns, records the changed slots/constraints/
+bindings, and derives a child pattern when the structure is similar but the
+contextual differences matter. It may also compose, generalize, or specialize
+patterns to address an evidenced capability gap. CheeseCritic and grammar,
+type, scope, provenance, and phase/effect validators assess the proposal.
+Validation does not overwrite its parent or activate it: registration and
+activation remain under the existing authorized path.
+    </annotation>
+  </semantics>
+
+</math>

@@ -1,0 +1,327 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+
+  <!--
+    daemon-eliza.mml
+
+    ELIZA-µ contract:
+      Reasoning operator daemon — dispatches the 16 Pop+Sek operator pairs
+      (CAUSE/CONTRAST/ANALOGY/DEDUCTION/INDUCTION/ABDUCTION/SYNTHESIS/
+       DECOMPOSITION/REFRAME/CHALLENGE/SUPPORT/REDIRECT/QUESTION/COMPARE/PLAN/DIRECT)
+      and runs Rogerian reflection patterns for intent elicitation.
+
+      ELIZA spans two phases:
+        Pop — introduces/seeds the reasoning frame for the incoming query
+        Sek — executes the selected operator
+      Primary registry phase is Pop; operator authority phase per operator varies.
+
+    Implementation: src/micronaut/eliza_operators.cpp + src/micronaut/aiml_engine.cpp
+    AIML corpus: data/alice/eliza.aiml, chat.aiml, greetings.aiml, inquiry.aiml,
+                 interjection.aiml, salutations.aiml, continuation.aiml, that.aiml
+
+    Content dictionary: urn:kuhul:daemon-eliza:v1
+  -->
+
+  <!-- ── Identity ──────────────────────────────────────────────────────────── -->
+  <semantics>
+    <mrow>
+      <mi>eliza</mi><mo>_</mo><mi>&#x03BC;</mi>
+      <mo>=</mo>
+      <mo>&#x27E8;</mo>
+      <mi>phase</mi><mo>,</mo><mi>T</mi><mo>,</mo><mi>role</mi>
+      <mo>&#x27E9;</mo>
+    </mrow>
+    <annotation-xml encoding="MathML-Content">
+      <apply>
+        <eq/>
+        <apply><csymbol cd="urn:kuhul:daemon-eliza:v1">Identity</csymbol><ci>eliza</ci></apply>
+        <list>
+          <cn>Pop</cn>
+          <cn>0.35</cn>
+          <ci>ReasoningOperatorDaemon</ci>
+        </list>
+      </apply>
+    </annotation-xml>
+    <annotation encoding="text/plain">
+eliza_mu = &lt;phase=Pop, T=0.35, role=ReasoningOperatorDaemon&gt;
+Primary phase: Pop (seed/introduction) — introduces reasoning frame for query.
+Secondary execution phase: Sek — Pop+Sek operator pair.
+Temperature 0.35: low — ELIZA is pattern-based and near-deterministic.
+Phase angle (Pop): theta = 0.
+    </annotation>
+  </semantics>
+
+  <mspace linebreak="newline"/>
+
+  <!-- ── Capability ────────────────────────────────────────────────────────── -->
+  <semantics>
+    <mrow>
+      <mi>Cap</mi><mo>(</mo><mi>eliza</mi><mo>)</mo>
+      <mo>=</mo>
+      <mo>{</mo>
+      <mi>OPERATOR_DISPATCH</mi><mo>,</mo>
+      <mi>ROGERIAN_REFLECT</mi><mo>,</mo>
+      <mi>INTENT_ELICIT</mi><mo>,</mo>
+      <mi>COMPARE</mi>
+      <mo>}</mo>
+    </mrow>
+    <annotation-xml encoding="MathML-Content">
+      <apply>
+        <csymbol cd="urn:kuhul:daemon-eliza:v1">Capability</csymbol>
+        <ci>eliza</ci>
+        <list>
+          <ci>OPERATOR_DISPATCH</ci>
+          <ci>ROGERIAN_REFLECT</ci>
+          <ci>INTENT_ELICIT</ci>
+          <ci>COMPARE</ci>
+        </list>
+      </apply>
+    </annotation-xml>
+    <annotation encoding="text/plain">
+CAN:
+  OPERATOR_DISPATCH — routes to one of 16 reasoning operators:
+    CAUSE, CONTRAST, ANALOGY, DEDUCTION, INDUCTION, ABDUCTION,
+    SYNTHESIS, DECOMPOSITION, REFRAME, CHALLENGE, SUPPORT,
+    REDIRECT, QUESTION, COMPARE, PLAN, DIRECT.
+    Each is a Pop+Sek pair: Pop introduces the frame, Sek executes it.
+  ROGERIAN_REFLECT — rephrases/reflects user input back ("Tell me more
+    about X", "Why do you feel X?", "What makes you think X?") using
+    AIML pattern matching in data/alice/{chat,greetings,inquiry,
+    interjection,salutations,continuation,that}.aiml.
+  INTENT_ELICIT — scaffolds query understanding by probing the user's
+    intent before routing to an executor; surfaces ambiguity for the
+    Omega gate.
+  COMPARE — structured comparison operator; also dispatches via SRAI
+    surface (XCFE COMPARE → executor=eliza, phase=Ch'en).
+
+SUPPLIES: reasoning_frame (Pop output), operator_result (Sek output),
+          reflection_response, intent_candidate, comparison_report.
+    </annotation>
+  </semantics>
+
+  <mspace linebreak="newline"/>
+
+  <!-- ── Operator set ───────────────────────────────────────────────────────── -->
+  <semantics>
+    <mrow>
+      <mi>Ops</mi><mo>(</mo><mi>eliza</mi><mo>)</mo>
+      <mo>=</mo>
+      <msup><mi>O</mi><mn>16</mn></msup>
+      <mo>,</mo>
+      <mspace width="0.5em"/>
+      <mi>&#x2200;</mi><mi>op</mi><mo>&#x2208;</mo><mi>Ops</mi>
+      <mo>:</mo>
+      <mi>op</mi><mo>=</mo>
+      <mo>&#x27E8;</mo><mi>Pop</mi><mo>,</mo><mi>Sek</mi><mo>&#x27E9;</mo>
+    </mrow>
+    <annotation-xml encoding="MathML-Content">
+      <apply>
+        <csymbol cd="urn:kuhul:daemon-eliza:v1">OperatorSet</csymbol>
+        <cn>16</cn>
+        <list>
+          <ci>CAUSE</ci><ci>CONTRAST</ci><ci>ANALOGY</ci><ci>DEDUCTION</ci>
+          <ci>INDUCTION</ci><ci>ABDUCTION</ci><ci>SYNTHESIS</ci><ci>DECOMPOSITION</ci>
+          <ci>REFRAME</ci><ci>CHALLENGE</ci><ci>SUPPORT</ci><ci>REDIRECT</ci>
+          <ci>QUESTION</ci><ci>COMPARE</ci><ci>PLAN</ci><ci>DIRECT</ci>
+        </list>
+        <list><ci>Pop</ci><ci>Sek</ci></list>
+      </apply>
+    </annotation-xml>
+    <annotation encoding="text/plain">
+16 operators, each a Pop+Sek phase pair.
+Pop (theta=0): introduces the reasoning frame — pattern-matches the query shape
+  and selects which operator applies.
+Sek (theta=pi): executes the operator — applies the selected reasoning transform.
+Implementation: src/micronaut/eliza_operators.cpp.
+ELIZA does not select the operator autonomously; XCFE routes the matched
+frame to the appropriate operator based on the query structure.
+    </annotation>
+  </semantics>
+
+  <mspace linebreak="newline"/>
+
+  <!-- ── Authority boundary ────────────────────────────────────────────────── -->
+  <semantics>
+    <mrow>
+      <mi>&#x0394;B</mi><mo>&#x2209;</mo><mi>Auth</mi><mo>(</mo><mi>eliza</mi><mo>)</mo>
+    </mrow>
+    <annotation-xml encoding="MathML-Content">
+      <apply>
+        <csymbol cd="urn:kuhul:daemon-eliza:v1">AuthorityBoundary</csymbol>
+        <apply><notin/><ci>DeltaTopology</ci><ci>Auth_eliza</ci></apply>
+      </apply>
+    </annotation-xml>
+    <annotation encoding="text/plain">
+CANNOT: commit topology, claim Ch'en verdict, mutate GramStore directly,
+        or route to Xul unilaterally.
+BOUNDARY: ELIZA produces reasoning_frame (Pop) and operator_result (Sek)
+  as evidence. Ch'en verifies; XCFE authorizes; Xul commits.
+  ELIZA's ROGERIAN_REFLECT output is evidence, not a fact commit.
+  COMPARE output feeds evidence_refs for XCFE VERIFY, not the verdict itself.
+Delta_B not-in Auth(eliza): topology commits require Proposal -> Ch'en -> XCFE -> Xul.
+    </annotation>
+  </semantics>
+
+  <mspace linebreak="newline"/>
+
+  <!-- ── WCR scoring position ───────────────────────────────────────────────── -->
+  <semantics>
+    <mrow>
+      <mi>S</mi><mo>=</mo>
+      <msub><mi>W</mi><mi>&#x03BC;</mi></msub>
+      <mo>&#x22C5;</mo>
+      <msub><mi>C</mi><mi>&#x03BC;</mi></msub>
+      <mo>&#x22C5;</mo>
+      <msub><mi>R</mi><mi>&#x03BC;</mi></msub>
+      <mo>(</mo><mi>Q</mi><mo>)</mo>
+    </mrow>
+    <annotation-xml encoding="MathML-Content">
+      <apply>
+        <eq/>
+        <ci>S</ci>
+        <apply>
+          <times/>
+          <apply><selector/><ci>W</ci><ci>mu</ci></apply>
+          <apply><selector/><ci>C</ci><ci>mu</ci></apply>
+          <apply>
+            <csymbol cd="urn:kuhul:daemon-eliza:v1">Relevance</csymbol>
+            <ci>Q</ci>
+          </apply>
+        </apply>
+      </apply>
+    </annotation-xml>
+    <annotation encoding="text/plain">
+S = W_mu * C_mu * R_mu(Q)
+W_mu: static weight; elevated for queries matching reflection/reasoning patterns.
+C_mu: confidence from Ch'en-verified reasoning outcomes.
+R_mu(Q): relevance peaks when Q contains reasoning operator triggers
+  (CAUSE/CONTRAST/WHY/COMPARE/PLAN/etc.) or open-ended intent elicitation cues.
+Eligibility: ELIZA admitted when requires(op) ⊆ {OPERATOR_DISPATCH, ROGERIAN_REFLECT,
+  INTENT_ELICIT, COMPARE}. Not admitted for pure topic-lookup queries (→ ALICE-µ).
+    </annotation>
+  </semantics>
+
+  <!-- ── Map / Filter / Fold at Pop+Sek ───────────────────────────────────── -->
+
+  <semantics>
+    <mrow>
+      <mi>Map</mi>
+      <mo>(</mo><msub><mi>f</mi><mi>op</mi></msub><mo>,</mo><mi>Q</mi><mo>)</mo>
+      <mo>=</mo>
+      <mo>[</mo>
+      <mo>(</mo><msub><mi>op</mi><mi>i</mi></msub><mo>,</mo><msub><mi>frame</mi><mi>i</mi></msub><mo>)</mo>
+      <mo>]</mo><msub><mrow/><mi>i</mi></msub>
+    </mrow>
+    <annotation-xml encoding="MathML-Content">
+      <apply>
+        <csymbol cd="urn:kuhul:functional:v1">map</csymbol>
+        <apply><csymbol cd="urn:kuhul:daemon-eliza:v1">OpFrameSelect</csymbol></apply>
+        <ci>Q</ci>
+      </apply>
+    </annotation-xml>
+    <annotation encoding="text/plain">
+Phase: Pop.
+Map(f_op, Q) = [(op_i, frame_i)] for each of the 16 operators in Ops(eliza).
+f_op matches Q against the operator's AIML trigger pattern;
+frame_i is the reasoning frame yielded when the trigger fires.
+Output type: list of (operator_id, reasoning_frame) pairs.
+Pure transform — does not execute operators; builds the candidate surface.
+    </annotation>
+  </semantics>
+
+  <mspace linebreak="newline"/>
+
+  <semantics>
+    <mrow>
+      <mi>Filter</mi>
+      <mo>(</mo><msub><mi>P</mi><mi>trigger</mi></msub><mo>,</mo><mi>candidates</mi><mo>)</mo>
+      <mo>=</mo>
+      <mo>[</mo><mi>c</mi><mo>|</mo>
+      <mi>c</mi><mo>.</mo><mi>trigger&#x5F;score</mi><mo>&gt;</mo><mn>0</mn>
+      <mo>&#x2227;</mo>
+      <mi>XCFE</mi><mo>&#x5F;</mo><mi>admits</mi><mo>(</mo><mi>c</mi><mo>.</mo><mi>op</mi><mo>)</mo>
+      <mo>]</mo>
+    </mrow>
+    <annotation-xml encoding="MathML-Content">
+      <apply>
+        <csymbol cd="urn:kuhul:functional:v1">filter</csymbol>
+        <apply><csymbol cd="urn:kuhul:daemon-eliza:v1">TriggerAdmission</csymbol></apply>
+        <ci>candidates</ci>
+      </apply>
+    </annotation-xml>
+    <annotation encoding="text/plain">
+Phase: Pop (eligibility) + Wo (XCFE admission gate).
+Predicate P_trigger retains a candidate iff:
+  (a) trigger_score > 0 — the operator's pattern fired on Q, and
+  (b) XCFE_admits(c.op) — the operator is eligible under the current
+      phase context (requires(op) ⊆ capabilities(eliza)).
+Filter cannot substitute for XCFE admission; it consumes the admission result.
+Rogerian reflection candidates pass when Q is open-ended or emotionally framed.
+    </annotation>
+  </semantics>
+
+  <mspace linebreak="newline"/>
+
+  <semantics>
+    <mrow>
+      <mi>Fold</mi>
+      <mo>(</mo><msub><mi>&#x2295;</mi><mi>primary</mi></msub><mo>,</mo>
+      <mo>&#x22A5;</mo><mo>,</mo><mi>filtered</mi><mo>)</mo>
+      <mo>=</mo><mi>reasoning&#x5F;frame</mi>
+      <mspace width="0.5em"/>
+      <mover><mo>&#x2192;</mo><mi>Sek</mi></mover>
+      <mspace width="0.5em"/>
+      <mi>operator&#x5F;result</mi>
+    </mrow>
+    <annotation-xml encoding="MathML-Content">
+      <apply>
+        <csymbol cd="urn:kuhul:functional:v1">fold</csymbol>
+        <apply><csymbol cd="urn:kuhul:daemon-eliza:v1">PrimaryFrameSelect</csymbol></apply>
+        <csymbol cd="urn:kuhul:daemon-eliza:v1">EmptyFrame</csymbol>
+        <ci>filtered</ci>
+      </apply>
+    </annotation-xml>
+    <annotation encoding="text/plain">
+Phase: Pop → Sek.
+Fold(⊕_primary, ⊥, filtered) reduces filtered candidates to the primary
+reasoning_frame — the highest-scoring (op, frame) pair after W·C·R ranking.
+The accumulated reasoning_frame is then passed to Sek for operator execution:
+  Sek dispatches eliza_operators.cpp with the selected op and frame as inputs,
+  producing operator_result.
+Associativity not assumed; step ⊕_primary is W·C·R max-select, not sum.
+Empty-input result is ⊥ (no frame selected) → Rogerian fallback reflection.
+    </annotation>
+  </semantics>
+
+  <mspace linebreak="newline"/>
+
+  <semantics>
+    <mrow>
+      <mi>SharedPatternKernelRef</mi><mo>=</mo>
+      <mtext>data/grammar/mml/v1/PatternKernelCalls.mml</mtext>
+    </mrow>
+    <annotation-xml encoding="MathML-Content">
+      <apply>
+        <csymbol cd="urn:kuhul:pattern-kernel-calls:v1">UsesSharedPatternKernel</csymbol>
+        <list><ci>MicronautPatterns</ci><ci>DaemonPatterns</ci><ci>SraiOperators</ci>
+          <ci>aiml-functions</ci><ci>map-filter-fold</ci><ci>CheeseCritic</ci></list>
+      </apply>
+    </annotation-xml>
+    <annotation encoding="text/plain">
+Uses shared typed pattern-call contract. Invokes only registered operations
+applicable to its role (Pop+Sek operator dispatch, Rogerian reflection).
+The shared reference does not grant capabilities or execution authority.
+    </annotation>
+  </semantics>
+
+  <annotation encoding="text/plain">
+daemon-eliza contract invariants:
+1. ELIZA is the reasoning operator daemon; it is not a general-purpose conversational daemon.
+2. Every operator is a Pop+Sek pair; Pop introduces the frame, Sek executes it.
+3. ROGERIAN_REFLECT output is evidence (intent_candidate); it is not a verified answer.
+4. COMPARE output feeds evidence_refs; XCFE VERIFY issues the verdict.
+5. ELIZA is not admitted for pure topic-lookup queries (those route to ALICE-µ).
+6. Temperature 0.35 reflects the near-deterministic pattern-matching nature of ELIZA.
+7. Topology commits require the full Proposal -> Ch'en -> XCFE -> Xul path.
+  </annotation>
+</math>

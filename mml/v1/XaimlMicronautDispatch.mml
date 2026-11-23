@@ -1,0 +1,220 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+  <!--
+    XaimlMicronautDispatch.mml
+    XAIML → Micronaut admission and dispatch contract.
+
+    Content dictionary: urn:kuhul:xaiml-micronaut:v1
+    Machine contract:   data/grammar/aiml-pattern-bank.contracts.json
+    Grammar surface:    drivers/grammar/ebnf/22-aiml-micronaut.ebnf
+    XCFE program:       data/programs/xcfe.aiml-micronaut-dispatch.json
+    MML authority (upstream): .AIML/runtime/bin/data/grammar/pattern-drivers/mml/XaimlMicronautDispatch.mml
+
+    AUTHORITY BOUNDARY: This document is projection-admission geometry.
+    Ch'en verifies, XCFE authorizes, Xul commits topology B.
+    dispatchAuthorized=0, capabilityGrant=0, laneSynchronization=0 at the XAIML layer.
+    xcfe.aiml-micronaut-dispatch is the admitted dispatcher that acts on RouteProposals.
+
+    CaptureGate (vectors.mml, urn:kuhul:fold-graph:v1) is the parent formula:
+      CaptureGate(Q,µ) iff Phi_µ(Q) >= EntropyDiffusion_µ and policy_ok and capable and xcfe_ok.
+    The Admit formula below refines the three conditions (policy_ok, capable, xcfe_ok)
+    into five XAIML-specific checks without changing the gate structure.
+  -->
+
+  <semantics>
+    <mrow>
+      <mi>XAIMLDispatch</mi><mo>(</mo><mi>input</mi><mo>)</mo>
+      <mo>&#x2192;</mo><mi>PatternMatch</mi>
+      <mo>&#x2192;</mo><mi>TypedBindings</mi>
+      <mo>&#x2192;</mo><mi>RouteProposal</mi>
+    </mrow>
+    <annotation-xml encoding="MathML-Content">
+      <apply>
+        <csymbol cd="urn:kuhul:xaiml-micronaut:v1">DispatchProposal</csymbol>
+        <ci>input</ci>
+        <list>
+          <ci>PatternMatch</ci><ci>TypedBindings</ci>
+          <ci>RegisteredKernelContract</ci><ci>LaneRequests</ci>
+        </list>
+      </apply>
+    </annotation-xml>
+    <annotation encoding="text/plain">
+XAIMLDispatch: input → PatternMatch → TypedBindings → RouteProposal.
+The XAIML category proposes a Micronaut, capability, phase, typed wildcard bindings,
+and lane requests. It does not invoke the target. RouteProposal is proposal evidence only.
+    </annotation>
+  </semantics>
+
+  <mspace linebreak="newline"/>
+
+  <semantics>
+    <mrow>
+      <mi>Admit</mi><mo>=</mo>
+      <mi>targetRegistered</mi>
+      <mo>&#x2227;</mo><mi>capabilityMatches</mi>
+      <mo>&#x2227;</mo><mi>phaseSupported</mi>
+      <mo>&#x2227;</mo><mi>bindingsValid</mi>
+      <mo>&#x2227;</mo><mi>laneModesAllowed</mi>
+    </mrow>
+    <annotation-xml encoding="MathML-Content">
+      <apply>
+        <csymbol cd="urn:kuhul:xaiml-micronaut:v1">ValidateProposal</csymbol>
+        <list>
+          <ci>targetRegistered</ci><ci>capabilityMatches</ci>
+          <ci>phaseSupported</ci><ci>bindingsValid</ci><ci>laneModesAllowed</ci>
+        </list>
+      </apply>
+    </annotation-xml>
+    <annotation encoding="text/plain">
+Admit = targetRegistered ∧ capabilityMatches ∧ phaseSupported ∧ bindingsValid ∧ laneModesAllowed.
+Refinement of CaptureGate(Q,µ) from vectors.mml:
+  policy_ok  → targetRegistered ∧ phaseSupported
+  capable    → capabilityMatches
+  xcfe_ok    → laneModesAllowed ∧ bindingsValid
+Validation is separate from invocation. A validated proposal is not yet execution.
+    </annotation>
+  </semantics>
+
+  <mspace linebreak="newline"/>
+
+  <semantics>
+    <mrow>
+      <mi>dispatchAuthorized</mi><mo>=</mo><mn>0</mn>
+      <mspace width="1em"/>
+      <mi>capabilityGrant</mi><mo>=</mo><mn>0</mn>
+      <mspace width="1em"/>
+      <mi>laneSynchronization</mi><mo>=</mo><mn>0</mn>
+    </mrow>
+    <annotation-xml encoding="MathML-Content">
+      <apply>
+        <csymbol cd="urn:kuhul:xaiml-micronaut:v1">ProposalOnly</csymbol>
+        <false/><false/><false/>
+      </apply>
+    </annotation-xml>
+    <annotation encoding="text/plain">
+ProposalOnly: dispatchAuthorized=0, capabilityGrant=0, laneSynchronization=0.
+The XAIML category logs a RouteProposal. xcfe.aiml-micronaut-dispatch is the
+admitted dispatcher: its Yax gate runs W·C·R capability admission before Sek
+invokes the target Micronaut. Current lane modes: read, retrieve, score, propose.
+write mode is defined but gated (Xul + XCFE authorization required).
+    </annotation>
+  </semantics>
+
+  <mspace linebreak="newline"/>
+
+  <semantics>
+    <mrow>
+      <mi>LaneSet</mi>
+      <mo>&#x2190;</mo>
+      <mi>PatternSyncDecls</mi><mo>(</mo><mi>pattern</mi><mo>)</mo>
+      <mspace width="1em"/>
+      <mi>at</mi>
+      <mspace width="0.3em"/>
+      <mi>Wo</mi>
+    </mrow>
+    <annotation-xml encoding="MathML-Content">
+      <apply>
+        <csymbol cd="urn:kuhul:xaiml-micronaut:v1">LaneSetBinding</csymbol>
+        <ci>LaneSet</ci>
+        <apply>
+          <csymbol cd="urn:kuhul:xaiml-micronaut:v1">PatternSyncDecls</csymbol>
+          <ci>pattern</ci>
+        </apply>
+        <ci>Wo</ci>
+      </apply>
+    </annotation-xml>
+    <annotation encoding="text/plain">
+LaneSetBinding: lane_set ← PatternSyncDecls(pattern) at phase Wo.
+The lane_set is bound from the pattern's static &lt;xaiml:sync&gt; declarations at Wo (binding phase).
+Binding at Sek or later would allow runtime state to determine lane accessibility — a violation.
+PB6 wiring invariant: lane_set binding phase = Wo, never Sek or later.
+lane_set ⊆ PatternSyncDecls(pattern): no ambient lane access beyond declared sync elements.
+    </annotation>
+  </semantics>
+
+  <mspace linebreak="newline"/>
+
+  <semantics>
+    <mrow>
+      <mi>&#x03C3;</mi><mo>:</mo>
+      <mi>observed</mi>
+      <mo>&#x2192;</mo>
+      <mi>validated</mi>
+      <mo>&#x21D4;</mo>
+      <mi>Admit</mi>
+      <mo>&#x2227;</mo>
+      <mi>XCFE</mi>
+      <mo>&#x2227;</mo>
+      <mi>Ch&#x2019;en</mi>
+    </mrow>
+    <annotation-xml encoding="MathML-Content">
+      <apply>
+        <csymbol cd="urn:kuhul:xaiml-micronaut:v1">CandidatePromotion</csymbol>
+        <ci>sigma_observed</ci>
+        <ci>sigma_validated</ci>
+        <apply>
+          <and/>
+          <apply><csymbol cd="urn:kuhul:xaiml-micronaut:v1">ValidateProposal</csymbol></apply>
+          <ci>XCFE</ci>
+          <ci>Ch_en</ci>
+        </apply>
+      </apply>
+    </annotation-xml>
+    <annotation encoding="text/plain">
+CandidatePromotion: sigma: observed → validated iff Admit ∧ XCFE ∧ Ch'en.
+A candidate pattern generated by the Question Engine enters pattern_bank.candidates at sigma='observed'.
+It cannot be promoted past sigma='validated' until all five Admit conditions pass and
+XCFE policy + Ch'en verification authorize the promotion.
+Micronauts evolve patterns without acquiring authority to rewrite the phase law (PB7).
+    </annotation>
+  </semantics>
+
+  <mspace linebreak="newline"/>
+
+  <semantics>
+    <mrow>
+      <mi>PB4_gap</mi><mo>:</mo>
+      <mi>COMPARE</mi>
+      <mo>&#x2217;</mo>
+      <mi>AND</mi>
+      <mo>&#x2217;</mo>
+      <mo>&#x21D2;</mo>
+      <mi>left</mi><mo>,</mo><mi>right</mi>
+      <mspace width="0.5em"/>
+      <mi>bound</mi>
+      <mspace width="0.5em"/>
+      <mi>but</mi>
+      <mspace width="0.5em"/>
+      <mi>invoke</mi><mo>(</mo><mi>input</mi><mo>=</mo><mi>left</mi><mo>)</mo>
+      <mspace width="0.5em"/>
+      <mi>only</mi>
+    </mrow>
+    <annotation-xml encoding="MathML-Content">
+      <apply>
+        <csymbol cd="urn:kuhul:xaiml-micronaut:v1">BindingGap</csymbol>
+        <ci>COMPARE_AND</ci>
+        <ci>left</ci>
+        <ci>right</ci>
+        <ci>invoke_left_only</ci>
+      </apply>
+    </annotation-xml>
+    <annotation encoding="text/plain">
+BindingGap(COMPARE * AND *): left(index=1) and right(index=2) are declared via &lt;xaiml:bind&gt;.
+&lt;xaiml:invoke input="left"/&gt; forwards only left; right is bound but not passed.
+Resolution options: (a) add invoke secondary="right" to forward both; (b) confirm right is resolved
+by the FieldLane via relation_query and document as intentional; (c) add a dedicated right binding step.
+This gap is in micronaut-routing.aiml and must be resolved before the admitted dispatcher acts on COMPARE.
+    </annotation>
+  </semantics>
+
+  <annotation encoding="text/plain">
+XaimlMicronautDispatch contract invariants:
+1. XAIML category produces RouteProposal only; dispatchAuthorized=0 at this layer.
+2. Admit is a refinement of CaptureGate(Q,µ) from vectors.mml — five conditions, same gate structure.
+3. lane_set is bound at Wo from static PatternSyncDecls; never derived at Sek from runtime state.
+4. CandidatePromotion requires Admit ∧ XCFE ∧ Ch'en; sigma cannot advance by proposal alone.
+5. COMPARE * AND * has an unresolved binding gap (right bound but not forwarded to invoke).
+6. Current permitted lane modes: read, retrieve, score, propose. write mode gated.
+7. xcfe.aiml-micronaut-dispatch is the admitted dispatcher; it is not this layer.
+  </annotation>
+</math>

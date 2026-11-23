@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+  <!--
+    CheeseCritic.mml
+    Declarative contract for evidence criticism and challenge evaluation.
+
+    A critic score describes criticism under a named scale. It is not a
+    truth value, a reward, or execution authority. This document does not
+    register a runtime kernel or mutate memory.
+  -->
+
+  <semantics>
+    <mrow>
+      <mi>CriticReport</mi><mo>=</mo>
+      <mo>&#x27E8;</mo><mi>candidateRef</mi><mo>,</mo><mi>evidenceRefs</mi><mo>,</mo>
+      <mi>objections</mi><mo>,</mo><mi>counterexamples</mi><mo>,</mo>
+      <mi>criticScore</mi><mo>,</mo><mi>scaleRef</mi><mo>,</mo>
+      <mi>recommendation</mi><mo>,</mo><mi>provenance</mi><mo>&#x27E9;</mo>
+    </mrow>
+    <annotation-xml encoding="MathML-Content">
+      <apply>
+        <csymbol cd="urn:kuhul:cheese-critic:v1">CriticReport</csymbol>
+        <list><ci>candidateRef</ci><ci>evidenceRefs</ci><ci>objections</ci>
+          <ci>counterexamples</ci><ci>criticScore</ci><ci>scaleRef</ci>
+          <ci>recommendation</ci><ci>provenance</ci></list>
+      </apply>
+    </annotation-xml>
+    <annotation encoding="text/plain">
+A report evaluates a candidate against cited evidence and a declared critic
+scale. It preserves objections and counterexamples so later reviewers can
+inspect why the report reached its recommendation.
+    </annotation>
+  </semantics>
+
+  <mspace linebreak="newline"/>
+
+  <semantics>
+    <mrow>
+      <mi>Critique</mi><mo>(</mo><mi>candidate</mi><mo>,</mo><mi>evidence</mi><mo>,</mo><mi>scale</mi><mo>)</mo>
+      <mo>&#x2192;</mo><mi>CriticReport</mi>
+    </mrow>
+    <annotation-xml encoding="MathML-Content">
+      <apply>
+        <csymbol cd="urn:kuhul:cheese-critic:v1">EvaluateCriticism</csymbol>
+        <ci>candidate</ci><ci>evidence</ci><ci>scale</ci><ci>CriticReport</ci>
+      </apply>
+    </annotation-xml>
+    <annotation encoding="text/plain">
+Critique may assess source quality, evidence coverage, contradictions,
+counterexamples, uncertainty, recency, and calibration. Critic scores must
+name their scale and polarity; a high score may mean strong or numerous
+criticism, strong criticism quality, or positive review, depending on that
+scale. Scores from different scales are not directly comparable.
+    </annotation>
+  </semantics>
+
+  <mspace linebreak="newline"/>
+
+  <semantics>
+    <mrow>
+      <mi>CriticScore</mi><mo>&#x2260;</mo><mi>Truth</mi>
+      <mspace width="1em"/><mi>CriticScore</mi><mo>&#x2260;</mo><mi>Reward</mi>
+      <mspace width="1em"/><mi>CriticScore</mi><mo>&#x2260;</mo><mi>Legality</mi>
+    </mrow>
+    <annotation-xml encoding="MathML-Content">
+      <apply>
+        <csymbol cd="urn:kuhul:cheese-critic:v1">ScoreSeparation</csymbol>
+        <ci>CriticScore</ci><ci>Truth</ci><ci>Reward</ci><ci>Legality</ci>
+      </apply>
+    </annotation-xml>
+    <annotation encoding="text/plain">
+Criticism is evidence about a candidate, not a verdict that the candidate is
+false or undesirable. High unresolved challenge pressure can prioritize
+investigation even when supporting evidence is substantial. Absence of
+criticism does not establish truth. XCFE legality remains an independent gate.
+    </annotation>
+  </semantics>
+
+  <mspace linebreak="newline"/>
+
+  <semantics>
+    <mrow>
+      <mi>Recommendation</mi><mo>&#x2208;</mo>
+      <mo>{</mo><mi>retain</mi><mo>,</mo><mi>investigate</mi><mo>,</mo>
+      <mi>verify</mi><mo>,</mo><mi>deprioritize</mi><mo>,</mo><mi>reject</mi><mo>}</mo>
+    </mrow>
+    <annotation-xml encoding="MathML-Content">
+      <apply>
+        <csymbol cd="urn:kuhul:cheese-critic:v1">CriticRecommendation</csymbol>
+        <list><ci>retain</ci><ci>investigate</ci><ci>verify</ci>
+          <ci>deprioritize</ci><ci>reject</ci></list>
+      </apply>
+    </annotation-xml>
+    <annotation encoding="text/plain">
+Recommendations are advisory outputs. Selection policy may use them with
+objective value, evidence strength, information gain, and cost. Rejection,
+fact promotion, learned-weight updates, and execution each require their own
+authorized policy and provenance-bearing decision.
+    </annotation>
+  </semantics>
+
+  <mspace linebreak="newline"/>
+
+  <semantics>
+    <mrow>
+      <mi>DiscussionInput</mi><mo>=</mo>
+      <mo>&#x27E8;</mo><mi>observe</mi><mo>,</mo><mi>compare</mi><mo>,</mo>
+      <mi>question</mi><mo>,</mo><mi>plan</mi><mo>,</mo><mi>verify</mi><mo>&#x27E9;</mo>
+    </mrow>
+    <annotation-xml encoding="MathML-Content">
+      <apply>
+        <csymbol cd="urn:kuhul:cheese-critic:v1">DiscussionInput</csymbol>
+        <list><ci>observe</ci><ci>compare</ci><ci>question</ci><ci>plan</ci><ci>verify</ci></list>
+      </apply>
+    </annotation-xml>
+    <annotation encoding="text/plain">
+A distilled discussion template (data/micronaut/distilled-questions.json) provides
+structured critic input. observe → seeds PromptField gramEvidence; compare →
+populates evidenceRefs for Critique(); question → contributes QuestionIdentity
+records to the DialogueCycle; plan → feeds candidate proposals; verify → maps to
+the critic step in DaemonPatterns.DialogueCycle. DiscussionInput carries
+provenance=gemma-distill and is treated as candidate evidence; Ch'en verification
+and XCFE legality remain independent gates before any fact promotion.
+    </annotation>
+  </semantics>
+
+  <mspace linebreak="newline"/>
+
+  <semantics>
+    <mrow>
+      <mi>CriticFeedback</mi><mo>&#x2192;</mo>
+      <mi>DialogueCycle</mi><mo>.</mo><mi>critic</mi>
+    </mrow>
+    <annotation-xml encoding="MathML-Content">
+      <apply>
+        <csymbol cd="urn:kuhul:cheese-critic:v1">FeedbackArc</csymbol>
+        <ci>CriticReport</ci><ci>DialogueCycleCriticStep</ci>
+      </apply>
+    </annotation-xml>
+    <annotation encoding="text/plain">
+CriticReport output feeds the critic step of DaemonPatterns.DialogueCycle.
+The recommendation field (retain/investigate/verify/deprioritize/reject) is
+advisory to the verify step and does not bypass XCFE or authorize execution.
+A CriticReport generated from gemma-distill patterns carries provenance=gemma-distill
+and enters the same Ch'en verification path as any other candidate before promotion
+to fact or topology change. Jyggalag (T=0.00) is the canonical collapse consumer
+of a critic-ranked candidate set; it may cite CriticReport.recommendation as
+collapse justification, but the Xul commit still requires the full authority path.
+    </annotation>
+  </semantics>
+
+  <annotation encoding="text/plain">
+CheeseCritic contract invariants:
+1. Every objection and score is linked to candidate, evidence, scale, and provenance.
+2. Critic-score meaning and polarity are explicit; no universal positive/negative interpretation is assumed.
+3. Challenge pressure is distinct from evidence strength, truth, utility, reward, and legality.
+4. Critique produces reports and recommendations; it does not mutate GramStore or execute candidates.
+5. Runtime registration and XCFE policy are required for any operational effect.
+6. DiscussionInput (gemma-distill provenance) enters as gramEvidence; it is not a verified critic scale.
+7. CriticFeedback to DialogueCycle.critic is advisory; Jyggalag collapse and Xul commit each require their own authority path.
+  </annotation>
+</math>

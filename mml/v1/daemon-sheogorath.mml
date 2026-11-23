@@ -1,0 +1,340 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+
+  <!--
+    daemon-sheogorath.mml
+
+    SHEOGORATH-µ contract:
+      Entropy-maximising candidate generator. At Xul phase (T=0.97) Sheogorath
+      produces the widest possible set of divergent candidate trajectories —
+      the Greymarch input set — which Jyggalag-µ (Ch'en, T=0.00) then collapses.
+
+      Sheogorath and Jyggalag are a matched pair and must appear as a unit.
+      Sheogorath GENERATES; Jyggalag COLLAPSES. Neither acts alone.
+
+      The Greymarch output record names the surviving candidate after Jyggalag
+      collapses; it is not a topology commit. Xul commit authority still
+      requires the full Proposal → Ch'en → XCFE → Xul path.
+
+    Phase: Xul (theta = 5π/3), T = 0.97
+    Pair:  Jyggalag-µ (Ch'en, T = 0.00) — see daemon-jyggalag.mml
+
+    Content dictionary: urn:kuhul:daemon-sheogorath:v1
+  -->
+
+  <!-- ── Identity ──────────────────────────────────────────────────────────── -->
+  <semantics>
+    <mrow>
+      <mi>sheogorath</mi><mo>_</mo><mi>&#x03BC;</mi>
+      <mo>=</mo>
+      <mo>&#x27E8;</mo>
+      <mi>phase</mi><mo>,</mo><mi>T</mi><mo>,</mo><mi>role</mi>
+      <mo>&#x27E9;</mo>
+    </mrow>
+    <annotation-xml encoding="MathML-Content">
+      <apply>
+        <eq/>
+        <apply><csymbol cd="urn:kuhul:daemon-sheogorath:v1">Identity</csymbol><ci>sheogorath</ci></apply>
+        <list>
+          <cn>Xul</cn>
+          <cn>0.97</cn>
+          <ci>EntropyMaximisingGenerator</ci>
+        </list>
+      </apply>
+    </annotation-xml>
+    <annotation encoding="text/plain">
+sheogorath_mu = &lt;phase=Xul, T=0.97, role=EntropyMaximisingGenerator&gt;
+Phase: Xul (theta = 5*pi/3) — the emission/commit boundary.
+T=0.97: near-maximum temperature; introduces maximum divergence across the
+  candidate space. Sheogorath is the most creative daemon in the registry.
+Role: produce the widest high-divergence candidate set so that Jyggalag
+  has a richly populated set to collapse. Breadth is the objective here,
+  not precision.
+    </annotation>
+  </semantics>
+
+  <mspace linebreak="newline"/>
+
+  <!-- ── Capability ────────────────────────────────────────────────────────── -->
+  <semantics>
+    <mrow>
+      <mi>Cap</mi><mo>(</mo><mi>sheogorath</mi><mo>)</mo>
+      <mo>=</mo>
+      <mo>{</mo>
+      <mi>ENTROPY_EXPAND</mi><mo>,</mo>
+      <mi>TRAJECTORY_DIVERGE</mi><mo>,</mo>
+      <mi>GREYMARCH_GENERATE</mi>
+      <mo>}</mo>
+    </mrow>
+    <annotation-xml encoding="MathML-Content">
+      <apply>
+        <csymbol cd="urn:kuhul:daemon-sheogorath:v1">Capability</csymbol>
+        <ci>sheogorath</ci>
+        <list>
+          <ci>ENTROPY_EXPAND</ci>
+          <ci>TRAJECTORY_DIVERGE</ci>
+          <ci>GREYMARCH_GENERATE</ci>
+        </list>
+      </apply>
+    </annotation-xml>
+    <annotation encoding="text/plain">
+CAN:
+  ENTROPY_EXPAND — at Xul phase, samples broadly from the fold-field using
+    T=0.97 to produce candidate states that span distant regions of Fold Space.
+    Entropy H(candidates) is maximised subject to phase-boundary constraints.
+  TRAJECTORY_DIVERGE — generates N divergent trajectory candidates from the
+    current accumulated context; each trajectory is a distinct interpretation
+    of the unresolved fold state, covering semantic, structural, and execution
+    axes independently.
+  GREYMARCH_GENERATE — assembles the greymarch_set: the full collection of
+    high-entropy candidates passed to Jyggalag for COLLAPSE. The greymarch_set
+    is evidence; it is not a commit.
+
+SUPPLIES: greymarch_set (to Jyggalag COLLAPSE), trajectory_candidates
+  (to SCORE pipeline), entropy_measure per candidate.
+    </annotation>
+  </semantics>
+
+  <mspace linebreak="newline"/>
+
+  <!-- ── Pair constraint ───────────────────────────────────────────────────── -->
+  <semantics>
+    <mrow>
+      <mi>Pair</mi>
+      <mo>(</mo><mi>sheogorath</mi><mo>,</mo><mi>jyggalag</mi><mo>)</mo>
+      <mo>=</mo>
+      <mo>&#x27E8;</mo>
+      <mi>generate</mi><mo>,</mo><mi>collapse</mi>
+      <mo>&#x27E9;</mo>
+    </mrow>
+    <annotation-xml encoding="MathML-Content">
+      <apply>
+        <csymbol cd="urn:kuhul:daemon-sheogorath:v1">PairConstraint</csymbol>
+        <ci>sheogorath</ci><ci>jyggalag</ci>
+        <ci>generate</ci><ci>collapse</ci>
+      </apply>
+    </annotation-xml>
+    <annotation encoding="text/plain">
+Sheogorath (Xul, T=0.97) and Jyggalag (Ch'en, T=0.00) are a matched unit.
+  Sheogorath generates the greymarch_set (high-entropy expansion).
+  Jyggalag collapses it to collapsed_candidate (total-order reduction).
+Neither acts alone:
+  Sheogorath without Jyggalag → unbounded expansion, no resolution.
+  Jyggalag without Sheogorath → collapses an impoverished set, misses solutions.
+The Greymarch is the output record of Jyggalag's collapse; it names the
+surviving candidate and is not itself a topology commit.
+    </annotation>
+  </semantics>
+
+  <mspace linebreak="newline"/>
+
+  <!-- ── Authority boundary ────────────────────────────────────────────────── -->
+  <semantics>
+    <mrow>
+      <mi>&#x0394;B</mi><mo>&#x2209;</mo><mi>Auth</mi><mo>(</mo><mi>sheogorath</mi><mo>)</mo>
+    </mrow>
+    <annotation-xml encoding="MathML-Content">
+      <apply>
+        <csymbol cd="urn:kuhul:daemon-sheogorath:v1">AuthorityBoundary</csymbol>
+        <apply><notin/><ci>DeltaTopology</ci><ci>Auth_sheogorath</ci></apply>
+      </apply>
+    </annotation-xml>
+    <annotation encoding="text/plain">
+CANNOT: commit topology, claim Ch'en verdict, select the surviving candidate
+  (that is Jyggalag's authority), or bypass the SCORE→RANK→COLLAPSE pipeline.
+BOUNDARY: Sheogorath's output is the greymarch_set — a collection of candidates.
+  It does not choose among them. The Omega gate (Ĥ_route) monitors the set's
+  entropy; if |Eligible| > 1 and Ĥ_route > 0.90 the set is passed through the
+  full disambiguation pipeline before COLLAPSE runs.
+  High T does not grant execution authority; it is an evidence-generation parameter.
+Delta_B not-in Auth(sheogorath): topology commits require Proposal -> Ch'en -> XCFE -> Xul.
+    </annotation>
+  </semantics>
+
+  <mspace linebreak="newline"/>
+
+  <!-- ── WCR scoring position ───────────────────────────────────────────────── -->
+  <semantics>
+    <mrow>
+      <mi>S</mi><mo>=</mo>
+      <msub><mi>W</mi><mi>&#x03BC;</mi></msub>
+      <mo>&#x22C5;</mo>
+      <msub><mi>C</mi><mi>&#x03BC;</mi></msub>
+      <mo>&#x22C5;</mo>
+      <msub><mi>R</mi><mi>&#x03BC;</mi></msub>
+      <mo>(</mo><mi>Q</mi><mo>)</mo>
+    </mrow>
+    <annotation-xml encoding="MathML-Content">
+      <apply>
+        <eq/>
+        <ci>S</ci>
+        <apply>
+          <times/>
+          <apply><selector/><ci>W</ci><ci>mu</ci></apply>
+          <apply><selector/><ci>C</ci><ci>mu</ci></apply>
+          <apply>
+            <csymbol cd="urn:kuhul:daemon-sheogorath:v1">Relevance</csymbol>
+            <ci>Q</ci>
+          </apply>
+        </apply>
+      </apply>
+    </annotation-xml>
+    <annotation encoding="text/plain">
+S = W_mu * C_mu * R_mu(Q)
+W_mu: static weight; elevated when the active candidate set is low-entropy
+  and needs diversity injection before COLLAPSE.
+C_mu: confidence from Ch'en-verified outcomes where Sheogorath's expansion
+  contributed the winning trajectory (i.e., Jyggalag selected from its set).
+R_mu(Q): relevance peaks when:
+  — the existing candidate pool is small or homogeneous (Ĥ_route low),
+  — the query is open-ended / ambiguous / admits multiple interpretations,
+  — a previous COLLAPSE exhausted the candidate set (MISS_ambiguity_exhausted
+    has not yet been reached).
+R_mu(Q) falls when the candidate set is already richly populated; Sheogorath
+is not admitted when entropy is already sufficient.
+    </annotation>
+  </semantics>
+
+  <mspace linebreak="newline"/>
+
+  <!-- ── Map / Filter / Fold at Xul ────────────────────────────────────────── -->
+
+  <semantics>
+    <mrow>
+      <mi>Map</mi>
+      <mo>(</mo><msub><mi>f</mi><mi>diverge</mi></msub><mo>,</mo>
+      <mi>fold&#x5F;state</mi><mo>)</mo>
+      <mo>=</mo>
+      <mo>[</mo>
+      <mo>(</mo><msub><mi>traj</mi><mi>i</mi></msub><mo>,</mo>
+      <msub><mi>candidate</mi><mi>i</mi></msub><mo>,</mo>
+      <msub><mi>H</mi><mi>i</mi></msub><mo>)</mo>
+      <mo>]</mo><msub><mrow/><mi>i</mi></msub>
+    </mrow>
+    <annotation-xml encoding="MathML-Content">
+      <apply>
+        <csymbol cd="urn:kuhul:functional:v1">map</csymbol>
+        <apply><csymbol cd="urn:kuhul:daemon-sheogorath:v1">DivergentSample</csymbol></apply>
+        <ci>fold_state</ci>
+      </apply>
+    </annotation-xml>
+    <annotation encoding="text/plain">
+Phase: Xul.
+Map(f_diverge, fold_state) = [(traj_i, candidate_i, H_i)] for N sampled
+trajectories from the current fold_state at T=0.97.
+f_diverge applies high-temperature sampling across the fold-field: each
+trajectory_id addresses a distinct region of Fold Space (semantic axis,
+phase axis, and structural axis are varied independently).
+H_i = entropy measure for candidate_i relative to the existing set:
+  H_i = -sum_j P(c_j | traj_i) * log P(c_j | traj_i).
+Output type: list of (trajectory_id, candidate_state, entropy_measure) triples.
+Pure at the map stage — does not commit or select; builds the raw divergent surface.
+N is bounded by kAmbiguityMaxAttempts to prevent unbounded expansion.
+    </annotation>
+  </semantics>
+
+  <mspace linebreak="newline"/>
+
+  <semantics>
+    <mrow>
+      <mi>Filter</mi>
+      <mo>(</mo><msub><mi>P</mi><mi>entropy</mi></msub><mo>,</mo>
+      <mi>candidates</mi><mo>)</mo>
+      <mo>=</mo>
+      <mo>[</mo><mi>c</mi><mo>|</mo>
+      <msub><mi>H</mi><mi>c</mi></msub><mo>&#x2265;</mo><msub><mi>H</mi><mi>min</mi></msub>
+      <mo>&#x2227;</mo>
+      <mo>&#x00AC;</mo><mi>duplicates</mi><mo>(</mo><mi>c</mi><mo>,</mo><mi>existing&#x5F;set</mi><mo>)</mo>
+      <mo>]</mo>
+    </mrow>
+    <annotation-xml encoding="MathML-Content">
+      <apply>
+        <csymbol cd="urn:kuhul:functional:v1">filter</csymbol>
+        <apply><csymbol cd="urn:kuhul:daemon-sheogorath:v1">EntropyFloor</csymbol></apply>
+        <ci>candidates</ci>
+      </apply>
+    </annotation-xml>
+    <annotation encoding="text/plain">
+Phase: Xul (before handoff to Jyggalag).
+Predicate P_entropy retains a candidate iff:
+  (a) H_c >= H_min — the candidate's entropy is above the floor; low-entropy
+      duplicates of already-known states are dropped (Sheogorath's filter is
+      the INVERSE of most daemons — it keeps high-divergence, drops convergent),
+  (b) ¬duplicates(c, existing_set) — the candidate does not replicate a state
+      already present in the active candidate pool.
+This inverted filter is what makes Sheogorath the entropy maximiser: it
+actively rejects candidates that add no new information to the set.
+Filter is stable; retained candidates preserve their entropy-descending order.
+    </annotation>
+  </semantics>
+
+  <mspace linebreak="newline"/>
+
+  <semantics>
+    <mrow>
+      <mi>Fold</mi>
+      <mo>(</mo><msub><mi>&#x2295;</mi><mi>union</mi></msub><mo>,</mo>
+      <mo>&#x2205;</mo><mo>,</mo><mi>filtered</mi><mo>)</mo>
+      <mo>=</mo><mi>greymarch&#x5F;set</mi>
+      <mspace width="0.5em"/>
+      <mover><mo>&#x2192;</mo><mi>Jyggalag</mi></mover>
+      <mspace width="0.5em"/>
+      <mi>COLLAPSE</mi>
+    </mrow>
+    <annotation-xml encoding="MathML-Content">
+      <apply>
+        <csymbol cd="urn:kuhul:functional:v1">fold</csymbol>
+        <apply><csymbol cd="urn:kuhul:daemon-sheogorath:v1">SetUnion</csymbol></apply>
+        <emptyset/>
+        <ci>filtered</ci>
+      </apply>
+    </annotation-xml>
+    <annotation encoding="text/plain">
+Phase: Xul → Ch'en (handoff to Jyggalag).
+Fold(⊕_union, ∅, filtered) = greymarch_set.
+Step ⊕_union is set union — Sheogorath's fold is EXPANSIVE, not reductive.
+It accumulates all filtered high-entropy candidates into greymarch_set.
+This is the deliberate inversion of most daemon folds (which reduce to one):
+  Sheogorath grows the set; Jyggalag shrinks it.
+greymarch_set is handed to Jyggalag (daemon-jyggalag.mml) for COLLAPSE.
+COLLAPSE produces collapsed_candidate (the Greymarch record).
+Empty-input result is ∅ → Jyggalag has nothing to collapse → MISS_ambiguity
+  is reported rather than fabricating a result.
+Associativity holds for set union; parallelisation of the map stage is safe.
+    </annotation>
+  </semantics>
+
+  <mspace linebreak="newline"/>
+
+  <semantics>
+    <mrow>
+      <mi>SharedPatternKernelRef</mi><mo>=</mo>
+      <mtext>data/grammar/mml/v1/PatternKernelCalls.mml</mtext>
+    </mrow>
+    <annotation-xml encoding="MathML-Content">
+      <apply>
+        <csymbol cd="urn:kuhul:pattern-kernel-calls:v1">UsesSharedPatternKernel</csymbol>
+        <list><ci>MicronautPatterns</ci><ci>DaemonPatterns</ci><ci>SraiOperators</ci>
+          <ci>aiml-functions</ci><ci>map-filter-fold</ci><ci>CheeseCritic</ci></list>
+      </apply>
+    </annotation-xml>
+    <annotation encoding="text/plain">
+Uses shared typed pattern-call contract. Invokes only registered operations
+applicable to its role (entropy expansion, trajectory divergence, greymarch generation).
+The shared reference does not grant capabilities or execution authority.
+    </annotation>
+  </semantics>
+
+  <annotation encoding="text/plain">
+daemon-sheogorath contract invariants:
+1. Sheogorath and Jyggalag are a matched pair; neither acts alone.
+2. Sheogorath generates; Jyggalag collapses. Sheogorath never selects the survivor.
+3. The greymarch_set is evidence passed to Jyggalag; it is not a topology commit.
+4. Sheogorath's filter is inverted: it retains high-entropy candidates and drops duplicates.
+5. Sheogorath's fold is expansive (set union); it grows the set, not reduces it.
+6. N trajectories is bounded by kAmbiguityMaxAttempts; unbounded expansion is not permitted.
+7. Empty greymarch_set → MISS_ambiguity; Sheogorath does not fabricate a result.
+8. High T=0.97 is an evidence-generation parameter, not execution authority.
+9. Topology commits require the full Proposal -> Ch'en -> XCFE -> Xul path.
+  </annotation>
+</math>

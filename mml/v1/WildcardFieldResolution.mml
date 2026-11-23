@@ -1,0 +1,291 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+  <!--
+    WildcardFieldResolution.mml
+    Wildcard capture → field/key lookup → vector projection → VectorLane scoring → bound result.
+
+    Content dictionary: urn:kuhul:wildcard-field-resolution:v1
+    Upstream contracts:
+      XaimlMicronautDispatch.mml  — wildcard capture binding (BindingGap, TypedBindings)
+      GMLTopology.mml             — FieldParamRecord (four read-only parameter vectors)
+      vectors.mml                 — VectorMuMicronaut::ExecuteProjection, MicronautAttraction
+    Lane grammar: drivers/grammar/ebnf/21-lanes.ebnf  (<vector-lane>)
+    XCFE program: xcfe.aiml-micronaut-dispatch.json   (Sek sync step on lane_set)
+
+    AUTHORITY BOUNDARY: field GML parameter values can guide matching and ranking.
+    They do not establish semantic truth and do not authorize a route.
+    A high VectorLane score is evidence only — XCFE/Ch'en/Xul remain the authority chain.
+    Provenance must be carried on every bound result so the authority chain can assess it.
+
+    GML role distinction (invariant from GMLTopology.mml):
+      FieldParamRecord GMLs — read-only parameter vectors, no graph relationships:
+        entropy_gradient_field.gml  — EntropyDiffusion constants (Omega gate thresholds)
+        tensor_field.gml            — Riemannian metric tensor g_ij, Riemann curvature
+        quantum_field_boundaries.gml — wave physics (wave_number, refractive, amplitude)
+        euclidean_gradient_field.gml — conservative gradient (curl=0, scalar_potential)
+      Topology GMLs — graph relationships, no cbuffer role:
+        unfold-graph.gml, khanary_topology.gml, hypercube_Q3/Q4.gml, ccc_n3/n4.gml, metric_graph.gml
+    The two roles must not be collapsed: a topology GML does not supply parameter vectors
+    and a FieldParamRecord GML does not supply adjacency.
+  -->
+
+  <semantics>
+    <mrow>
+      <mi>SyncActivation</mi>
+      <mo>:</mo>
+      <mi>Wo</mi>
+      <mo>&#x22A2;</mo>
+      <mi>lane_set</mi>
+      <mo>,</mo>
+      <mspace width="0.5em"/>
+      <mi>Sek</mi>
+      <mo>&#x22A2;</mo>
+      <mi>field_call</mi>
+    </mrow>
+    <annotation-xml encoding="MathML-Content">
+      <apply>
+        <csymbol cd="urn:kuhul:wildcard-field-resolution:v1">SyncActivation</csymbol>
+        <ci>Wo_bind</ci>
+        <ci>lane_set_declaration</ci>
+        <ci>Sek_sync</ci>
+        <ci>field_call_execution</ci>
+      </apply>
+    </annotation-xml>
+    <annotation encoding="text/plain">
+SyncActivation: the field is called at Sek sync, not at Wo bind.
+  Wo  (op: bind,  id: lane_set,  type: pattern_sync_decls):
+      declares which lanes are accessible from the static &lt;xaiml:sync&gt; declarations.
+      lane_set is a declared set — no field is called, no parameter resolved.
+  Sek (op: sync,  id: lane_set):
+      activates each declared lane. For every VectorLane entry in lane_set, THIS is
+      the field call: the WildcardFieldResolution pipeline runs at this step.
+      For every NGramLane entry, GramStore lookup runs. For FieldLane, relation query runs.
+      The sync step is the dispatch boundary between "declared accessible" and "actually called."
+XCFE program reference: xcfe.aiml-micronaut-dispatch.json step 9 (phase Sek, op sync, id lane_set).
+    </annotation>
+  </semantics>
+
+  <mspace linebreak="newline"/>
+
+  <semantics>
+    <mrow>
+      <mi>WildcardFieldPipeline</mi>
+      <mo>:</mo>
+      <mi>capture</mi>
+      <mo>&#x2192;</mo>
+      <mi>FieldKeyLookup</mi>
+      <mo>&#x2192;</mo>
+      <mi>VectorProjection</mi>
+      <mo>&#x2192;</mo>
+      <mi>VectorLaneScore</mi>
+      <mo>&#x2192;</mo>
+      <mi>BoundResult</mi><mo>(</mo><mi>provenance</mi><mo>)</mo>
+    </mrow>
+    <annotation-xml encoding="MathML-Content">
+      <apply>
+        <csymbol cd="urn:kuhul:wildcard-field-resolution:v1">WildcardFieldPipeline</csymbol>
+        <ci>capture</ci>
+        <ci>FieldKeyLookup</ci>
+        <ci>VectorProjection</ci>
+        <ci>VectorLaneScore</ci>
+        <ci>BoundResult</ci>
+        <ci>provenance</ci>
+      </apply>
+    </annotation-xml>
+    <annotation encoding="text/plain">
+WildcardFieldPipeline: five-stage pipeline, triggered at Sek sync for each VectorLane in lane_set.
+  Stage 1 — capture:        AIML * wildcard produces a typed binding (phrase/entity/predicate/identifier).
+                            Bound at Wo; available to the pipeline when sync fires at Sek.
+  Stage 2 — FieldKeyLookup: capture key is matched against FieldParamRecord GML node labels / attributes.
+                            Result: a parameter vector from the matching GML file (read-only).
+  Stage 3 — VectorProjection: VectorMuMicronaut::ExecuteProjection() projects the capture against
+                            the resolved parameter vector. Returns a bounded result substrate.
+  Stage 4 — VectorLaneScore: the projection result is scored via the &lt;vector-lane&gt; (21-lanes.ebnf,
+                            capability="vector-score"). Score ∈ [0,1]; no topology mutation.
+  Stage 5 — BoundResult:    score + resolved parameter vector + source GML filename are packaged
+                            as a bound result with source provenance.
+    </annotation>
+  </semantics>
+
+  <mspace linebreak="newline"/>
+
+  <semantics>
+    <mrow>
+      <mi>FieldKeyLookup</mi>
+      <mo>(</mo><mi>capture</mi><mo>)</mo>
+      <mo>&#x2192;</mo>
+      <mo>&#x7B;</mo>
+      <mi>file</mi><mo>,</mo>
+      <mi>param_vector</mi>
+      <mo>&#x7D;</mo>
+    </mrow>
+    <annotation-xml encoding="MathML-Content">
+      <apply>
+        <csymbol cd="urn:kuhul:wildcard-field-resolution:v1">FieldKeyLookup</csymbol>
+        <list>
+          <list><ci>entropy</ci><ci>ambiguity</ci><ci>diffusion</ci></list>
+          <ci>entropy_gradient_field.gml</ci>
+          <list><ci>entropy_bound</ci><ci>diffusion_beta_inv</ci><ci>entropy_spike</ci></list>
+        </list>
+        <list>
+          <list><ci>curvature</ci><ci>metric</ci><ci>tensor</ci><ci>bundle</ci></list>
+          <ci>tensor_field.gml</ci>
+          <list><ci>g_00</ci><ci>g_01</ci><ci>g_10</ci><ci>g_11</ci><ci>riemann_curvature_scalar</ci><ci>jacobian_w</ci></list>
+        </list>
+        <list>
+          <list><ci>wave</ci><ci>boundary</ci><ci>refractive</ci><ci>frequency</ci></list>
+          <ci>quantum_field_boundaries.gml</ci>
+          <list><ci>wave_number</ci><ci>refractive</ci><ci>amplitude_re</ci><ci>amplitude_im</ci><ci>phase_shift</ci></list>
+        </list>
+        <list>
+          <list><ci>gradient</ci><ci>potential</ci><ci>conservative</ci><ci>path</ci></list>
+          <ci>euclidean_gradient_field.gml</ci>
+          <list><ci>scalar_potential</ci><ci>arc_length</ci><ci>curl</ci><ci>potential_delta</ci></list>
+        </list>
+      </apply>
+    </annotation-xml>
+    <annotation encoding="text/plain">
+FieldKeyLookup: capture key term → GML file → parameter vector (read-only).
+Lookup is by semantic key family, not exact string match. Canonical mappings:
+  {entropy, ambiguity, diffusion}   → entropy_gradient_field.gml
+      param vector: {entropy_bound=4.00, diffusion_beta_inv=0.25, entropy_spike threshold}
+      use: guides Omega gate threshold — high local_entropy (3.82) vs low (0.15) contrast.
+  {curvature, metric, tensor, bundle} → tensor_field.gml
+      param vector: {g_00=-0.8524, g_01=0.0125, g_11=1.1486, riemann_curvature_scalar=-0.412, jacobian_w=1.0834}
+      use: non-Euclidean local metric for parallel transport scoring; negative curvature = hyperbolic region.
+  {wave, boundary, refractive, freq} → quantum_field_boundaries.gml
+      param vector: {wave_number=2.1/1.4, refractive=1.0/3.4, amplitude_re/im, phase_shift=π/4, π/2}
+      use: wave-propagation matching — refractive index 3.4 signals a high-impedance boundary reset.
+  {gradient, potential, conservative, path} → euclidean_gradient_field.gml
+      param vector: {scalar_potential ∈ [0.20, 0.95], arc_length=2.8284, curl=0, potential_delta=0.75}
+      use: conservative path scoring — curl=0 proves no holonomy; potential_delta ranks ascent.
+Lookup miss (capture key matches no family) → DATA_ONLY return; no projection attempted.
+Multiple matches → score each resolved vector; provenance must list all source files.
+    </annotation>
+  </semantics>
+
+  <mspace linebreak="newline"/>
+
+  <semantics>
+    <mrow>
+      <mi>VectorLaneScore</mi>
+      <mo>:</mo>
+      <mi>mode</mi>
+      <mo>=</mo>
+      <mi>score</mi>
+      <mo>,</mo>
+      <mspace width="0.5em"/>
+      <mi>mutation_authorized</mi>
+      <mo>=</mo>
+      <mi>false</mi>
+    </mrow>
+    <annotation-xml encoding="MathML-Content">
+      <apply>
+        <csymbol cd="urn:kuhul:wildcard-field-resolution:v1">VectorLaneScoringLaw</csymbol>
+        <ci>vector-lane</ci>
+        <ci>score</ci>
+        <false/>
+      </apply>
+    </annotation-xml>
+    <annotation encoding="text/plain">
+VectorLaneScoringLaw: the VectorLane operates in mode="score" for field-resolved projections.
+  Lane type: VectorLane (21-lanes.ebnf), capability="vector-score".
+  The projection result substrate from ExecuteProjection() feeds the lane's &lt;score_result&gt; element.
+  mutation_authorized="false" — the parameter vector from FieldParamRecord GMLs is read-only.
+  No topology node, edge, or gram entry is created or modified by a VectorLane score pass.
+  The score is carried forward as a WCR input (weights matching and ranking) at Yax,
+  not as a capability grant or route authorization.
+    </annotation>
+  </semantics>
+
+  <mspace linebreak="newline"/>
+
+  <semantics>
+    <mrow>
+      <mi>BoundResult</mi>
+      <mo>=</mo>
+      <mo>&#x27E8;</mo>
+      <mi>score</mi>
+      <mo>,</mo>
+      <mi>param_vector</mi>
+      <mo>,</mo>
+      <mi>source_gml</mi>
+      <mo>,</mo>
+      <mi>semantic_authority</mi>
+      <mo>=</mo>
+      <mi>false</mi>
+      <mo>&#x27E9;</mo>
+    </mrow>
+    <annotation-xml encoding="MathML-Content">
+      <apply>
+        <csymbol cd="urn:kuhul:wildcard-field-resolution:v1">BoundResultWithProvenance</csymbol>
+        <ci>score</ci>
+        <ci>param_vector</ci>
+        <ci>source_gml</ci>
+        <false/>
+      </apply>
+    </annotation-xml>
+    <annotation encoding="text/plain">
+BoundResultWithProvenance: every result from this pipeline is a 4-tuple.
+  score        — numeric score from VectorLane (∈ [0,1]); used as WCR ranking input.
+  param_vector — the resolved parameter constants from the source GML (read-only snapshot).
+  source_gml   — filename of the FieldParamRecord GML that supplied the parameters.
+                 Required for authority chain assessment: Ch'en can inspect provenance.
+  semantic_authority=false — field GML parameter values do not establish semantic truth.
+                 A score of 1.0 from entropy_gradient_field.gml does not prove a semantic claim.
+                 It does not authorize a route. XCFE/Ch'en/Xul remain the authority chain.
+Provenance is mandatory — a BoundResult without source_gml is malformed and must be rejected
+before it reaches the Yax W·C·R gate.
+    </annotation>
+  </semantics>
+
+  <mspace linebreak="newline"/>
+
+  <semantics>
+    <mrow>
+      <mi>ScoringNotTruth</mi>
+      <mo>:</mo>
+      <mi>score</mi>
+      <mo>&#x2208;</mo>
+      <mo>[</mo><mn>0</mn><mo>,</mo><mn>1</mn><mo>]</mo>
+      <mo>&#x21CF;</mo>
+      <mi>semantic_authority</mi>
+    </mrow>
+    <annotation-xml encoding="MathML-Content">
+      <apply>
+        <csymbol cd="urn:kuhul:wildcard-field-resolution:v1">ScoringNotTruth</csymbol>
+        <ci>score</ci>
+        <ci>semantic_authority</ci>
+        <ci>route_authorization</ci>
+      </apply>
+    </annotation-xml>
+    <annotation encoding="text/plain">
+ScoringNotTruth: field GML scores are evidence, not truth.
+  score ∈ [0,1] does not imply semantic_authority.
+  score ∈ [0,1] does not authorize a route.
+  A capture resolving to tensor_field.gml parameters produces a curvature-guided score.
+  That score can rank candidates at Yax; it cannot make a topology commit at Xul.
+  The authority chain is strictly:
+    field GML lookup → score (evidence) → W·C·R Yax gate → Ch'en verification → Xul commit.
+  No step in this pipeline may bypass or pre-empt a later gate.
+  Epistemic status of a BoundResult: SUPPORTED (if score meets threshold) or MISS (if lookup fails).
+  Never CONTRADICTED by a score alone — CONTRADICTED requires Ch'en verification of conflicting evidence.
+    </annotation>
+  </semantics>
+
+  <annotation encoding="text/plain">
+WildcardFieldResolution contract invariants:
+1. SyncActivation: Wo bind declares lane_set (accessible); Sek sync calls the field (executed).
+   The pipeline triggers at Sek sync, not at Wo bind. Captures are available at sync time.
+2. Pipeline is five stages: capture → FieldKeyLookup → VectorProjection → VectorLaneScore → BoundResult.
+   All five stages execute within the Sek sync step for each VectorLane in lane_set.
+3. FieldKeyLookup is read-only: FieldParamRecord GMLs supply parameter vectors; no writes.
+4. Topology GMLs (unfold-graph, hypercube_Q3/Q4, ccc, khanary_topology, metric_graph) are not
+   consulted in this pipeline — they provide graph relationships, not parameter vectors.
+5. VectorLane mode="score" for this pipeline; mutation_authorized=false.
+6. Every BoundResult carries source_gml provenance. A result without provenance is malformed.
+7. Scores guide W·C·R matching and ranking at Yax. They are evidence, not semantic truth.
+8. A field GML score cannot authorize a route; XCFE/Ch'en/Xul remain the authority chain.
+9. Lookup miss → DATA_ONLY. Multiple matches → score each; list all source files in provenance.
+  </annotation>
+</math>

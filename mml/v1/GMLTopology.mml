@@ -1,0 +1,398 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+  <!--
+    GMLTopology.mml
+    Runtime GML topology file registry and graph-law contracts.
+
+    Content dictionary: urn:kuhul:gml-topology:v1
+    Source directory:   data/*.gml
+    Runtime consumer:   FieldDag::load_gml() → src/world/gml_parser.cpp
+
+    AUTHORITY BOUNDARY: GML files are topology inputs for geometry and legal-adjacency.
+    They are not semantic authority. FieldDag::load_gml() creates TensorSubstrate
+    descriptors from provider_id attributes; it does not create MicronautEntry objects.
+    Only TrackLoader (JSON track files) and Factory::propose_create() may create
+    MicronautEntry objects. Geometry-source provider_id → projection-only substrate.
+
+    Two edge types:
+      @semantic_step — Hamming-1 bit flip, weight=1.0 (horizontal movement)
+      @phase_step    — C6 adjacent phase, weight=0.5 (vertical movement)
+      @related_to    — topology adjacency, weight=1.0
+      @fold_step     — complement fold edge, weight=1.0
+      @delegates_to / @requires / @verifies / @produces / @part_of / @defines / @exposes
+                     — semantic verb edges (metric_graph.gml, field graphs)
+
+    File inventory (13 files):
+      Topology graphs:
+        unfold-graph.gml          — G_runtime = Q_3 □ C_6 (48 nodes, 120 edges)
+        khanary_topology.gml      — semantic track Q3 + Q4 allocation slots (10 nodes)
+        hypercube_Q3.gml          — pure Q3 (8 nodes, 16 edges incl. fold edges)
+        hypercube_Q4.gml          — pure Q4 (16 nodes, 32 edges)
+        ccc_n3.gml                — CCC_3 (24 nodes, 36 edges)
+        ccc_n4.gml                — CCC_4 (64 nodes, 96 edges)
+      Field graphs (geometry/projection only):
+        metric_graph.gml          — METRIC-µ provider topology (18 nodes)
+        quantum_field_boundaries.gml  — wave/boundary graph (3 nodes)
+        tensor_field.gml          — TENSOR-µ bundle projection (2 nodes)
+        entropy_gradient_field.gml    — entropy gating manifold (2 nodes)
+        euclidean_gradient_field.gml  — conservative gradient field (2 nodes)
+      Behavioral affinity graph (style hints only; not FoldGraph B topology):
+        daemon_behavior_modes.gml    — optional mode-pair affinities/transitions
+      Test fixture:
+        sample.gml                — GML parser test fixture (3 nodes, 3 edges)
+  -->
+
+  <semantics>
+    <mrow>
+      <mi>G_runtime</mi>
+      <mo>=</mo>
+      <msup><mi>Q</mi><mi>n</mi></msup>
+      <mo>&#x25A1;</mo>
+      <msub><mi>C</mi><mn>6</mn></msub>
+    </mrow>
+    <annotation-xml encoding="MathML-Content">
+      <apply>
+        <csymbol cd="urn:kuhul:gml-topology:v1">ProductGraphLaw</csymbol>
+        <ci>unfold-graph.gml</ci>
+        <apply>
+          <csymbol cd="urn:kuhul:gml-topology:v1">HypercubeQ</csymbol>
+          <ci>n</ci>
+        </apply>
+        <apply>
+          <csymbol cd="urn:kuhul:gml-topology:v1">PhaseCycleC6</csymbol>
+        </apply>
+        <cn>48</cn><!-- |V| = 2^n · 6 = 8 · 6 for n=3 -->
+        <cn>120</cn><!-- |E| = 72 semantic + 48 phase -->
+        <cn>5</cn><!-- deg(v) = n + 2 = 3 + 2 -->
+      </apply>
+    </annotation-xml>
+    <annotation encoding="text/plain">
+ProductGraphLaw: G_runtime = Q_n □ C_6
+  unfold-graph.gml implements this for n=3.
+  |V| = 2^n · 6 = 48   (8 semantic addresses × 6 phases)
+  |E| = n · 2^n · 6 + 6 · 2^n = 3·8·6 + 6·8 = 144+48 = 192  (corrected: semantic edges are undirected pairs)
+  Semantic edge (b,θ) ↔ (b⊕eᵢ,θ): weight=1.0, verb="@semantic_step", Hamming distance 1
+  Phase edge   (b,θ) ↔ (b,θ±1): weight=0.5, verb="@phase_step", C6 adjacent
+  Legal atomic transition ↔ Hamming distance 1 in semantic dimension OR ±1 step in phase dimension.
+  Vertex id encoding: id = b·6 + theta_idx, where b = b0 + 2·b1 + 4·b2.
+  Semantic addresses (Q3): 000→REASON-µ, 001→CREATE-µ, 010→INFER-µ, 011→ELIZA,
+                            100→TOOL-µ, 101→ORCH-µ, 110→MEM-µ, 111→Coordinator.
+    </annotation>
+  </semantics>
+
+  <mspace linebreak="newline"/>
+
+  <semantics>
+    <mrow>
+      <mi>SemanticBits</mi>
+      <mo>:</mo>
+      <msub><mi>b</mi><mn>0</mn></msub>
+      <mo>&#x2208;</mo>
+      <mo>&#x7B;</mo><mi>analysis</mi><mo>,</mo><mi>generation</mi><mo>&#x7D;</mo>
+      <mo>,</mo>
+      <msub><mi>b</mi><mn>1</mn></msub>
+      <mo>&#x2208;</mo>
+      <mo>&#x7B;</mo><mi>active</mi><mo>,</mo><mi>memory-grounded</mi><mo>&#x7D;</mo>
+      <mo>,</mo>
+      <msub><mi>b</mi><mn>2</mn></msub>
+      <mo>&#x2208;</mo>
+      <mo>&#x7B;</mo><mi>object-level</mi><mo>,</mo><mi>meta-orchestration</mi><mo>&#x7D;</mo>
+    </mrow>
+    <annotation-xml encoding="MathML-Content">
+      <apply>
+        <csymbol cd="urn:kuhul:gml-topology:v1">SemanticAddressSchema</csymbol>
+        <ci>khanary_topology.gml</ci>
+        <ci>hypercube_Q3.gml</ci>
+        <list>
+          <ci>b0_analysis_generation</ci>
+          <ci>b1_active_memory</ci>
+          <ci>b2_object_meta</ci>
+        </list>
+      </apply>
+    </annotation-xml>
+    <annotation encoding="text/plain">
+SemanticAddressSchema: three semantic bits, each an orthogonal capability axis.
+  b0: analysis(0) / generation(1)   — does the track consume or produce?
+  b1: active(0)   / memory-grounded(1) — does it operate on live context or stored gram?
+  b2: object(0)   / meta-orchestration(1) — does it work on domain objects or the runtime itself?
+khanary_topology.gml: 8 Q3 nodes with track labels + 2 Q4 structural nodes (MORPHISM-µ, FIXED-POINT-µ).
+hypercube_Q3.gml: 8 nodes with bit labels (000-111), 12 semantic edges + 4 fold edges (complement b→b̄).
+  Fold edges connect complements: 000↔111, 001↔110, 010↔101, 011↔100. FQ3 is 4-regular, diameter 2.
+    </annotation>
+  </semantics>
+
+  <mspace linebreak="newline"/>
+
+  <semantics>
+    <mrow>
+      <mi>AllocationSlot</mi>
+      <mo>(</mo><mi>b</mi><mo>)</mo>
+      <mo>:</mo>
+      <msub><mi>b</mi><mn>3</mn></msub>
+      <mo>=</mo>
+      <mn>1</mn>
+      <mo>&#x21D2;</mo>
+      <mi>ALLOCATION</mi>
+    </mrow>
+    <annotation-xml encoding="MathML-Content">
+      <apply>
+        <csymbol cd="urn:kuhul:gml-topology:v1">AllocationSlotLaw</csymbol>
+        <ci>hypercube_Q4.gml</ci>
+        <ci>khanary_topology.gml</ci>
+        <list>
+          <cn>0001</cn><!-- MORPHISM-µ -->
+          <cn>0011</cn><!-- FIXED-POINT-µ -->
+          <cn>1111</cn><!-- Coordinator counterpart -->
+        </list>
+      </apply>
+    </annotation-xml>
+    <annotation encoding="text/plain">
+AllocationSlotLaw: Q4 extends Q3 by a fourth bit b3.
+  b3=0: occupied Q3 micronauts (REASON-µ through Coordinator).
+  b3=1: ALLOCATION slots — typed structural positions the Factory may mint new micronauts into.
+  Canonical Q4 latent addresses (from GLOSSARY.md and khanary_topology.gml):
+    (0,0,0,1) = MORPHISM-µ  — structural category morphism specialist
+    (0,0,1,1) = FIXED-POINT-µ — fixed-point / convergence specialist
+    (1,1,1,1) = Coordinator counterpart (dual)
+  An unoccupied slot is not an error — it is a named address awaiting Factory minting.
+  Factory::propose_create() uses these addresses for principled MicronautEntry creation.
+  hypercube_Q4.gml is the pure 16-vertex Q4 topology (no track labels, geometry only).
+    </annotation>
+  </semantics>
+
+  <mspace linebreak="newline"/>
+
+  <semantics>
+    <mrow>
+      <mi>CCC</mi><mo>(</mo><mi>n</mi><mo>)</mo>
+      <mo>:</mo>
+      <mi>V</mi>
+      <mo>=</mo>
+      <mrow>
+        <mo>&#x7B;</mo><mo>(</mo><mi>x</mi><mo>,</mo><mi>y</mi><mo>)</mo>
+        <mo>|</mo>
+        <mn>0</mn><mo>&#x2264;</mo><mi>x</mi><mo>&lt;</mo><msup><mn>2</mn><mi>n</mi></msup>
+        <mo>,</mo>
+        <mn>0</mn><mo>&#x2264;</mo><mi>y</mi><mo>&lt;</mo><mi>n</mi>
+        <mo>&#x7D;</mo>
+      </mrow>
+    </mrow>
+    <annotation-xml encoding="MathML-Content">
+      <apply>
+        <csymbol cd="urn:kuhul:gml-topology:v1">CubeConnectedCycles</csymbol>
+        <ci>ccc_n3.gml</ci>
+        <ci>ccc_n4.gml</ci>
+        <list>
+          <cn>3</cn><cn>24</cn><cn>36</cn><!-- n, |V|, |E| for CCC_3 -->
+          <cn>4</cn><cn>64</cn><cn>96</cn><!-- n, |V|, |E| for CCC_4 -->
+        </list>
+      </apply>
+    </annotation-xml>
+    <annotation encoding="text/plain">
+CubeConnectedCycles: CCC(n) is a 3-regular interconnection network.
+  V = {(x,y) | 0 ≤ x &lt; 2^n, 0 ≤ y &lt; n}: 2^n · n vertices.
+  Edges per vertex (x,y): cycle (x,(y+1) mod n), cycle (x,(y-1) mod n), XOR (x⊕2^y, y).
+  CCC_3: 24 nodes, 36 edges.  CCC_4: 64 nodes, 96 edges.
+  Role: parallel routing substrate. 3-regularity means constant router fan-out.
+  XOR edges are the cross-cluster links (bit-flip across clusters at depth y).
+  Cycle edges are the intra-cluster rotation links.
+  Both files are geometry-only topology descriptions loaded by FieldDag::load_gml().
+    </annotation>
+  </semantics>
+
+  <mspace linebreak="newline"/>
+
+  <semantics>
+    <mrow>
+      <mi>GravityScore</mi>
+      <mo>(</mo><mi>&#x03BC;</mi><mo>,</mo><mi>Q</mi><mo>)</mo>
+      <mo>=</mo>
+      <mfrac>
+        <mi>established_nodes</mi>
+        <msup><mi>distance</mi><mn>2</mn></msup>
+      </mfrac>
+      <mo>(</mo><mi>Q</mi><mo>,</mo><mi>&#x03BC;</mi><mo>)</mo>
+    </mrow>
+    <annotation-xml encoding="MathML-Content">
+      <apply>
+        <csymbol cd="urn:kuhul:gml-topology:v1">GravityWellGeometry</csymbol>
+        <list>
+          <ci>unfold-graph.gml</ci>
+          <ci>khanary_topology.gml</ci>
+          <ci>hypercube_Q3.gml</ci>
+          <ci>hypercube_Q4.gml</ci>
+        </list>
+        <ci>gravity_field.cpp</ci>
+        <ci>MicronautAttraction</ci>
+      </apply>
+    </annotation-xml>
+    <annotation encoding="text/plain">
+GravityWellGeometry: topology GMLs define the geometry of gravity wells; FieldParamRecord GMLs
+define field values inside wells at query time. The two roles must not be collapsed.
+
+Gravity scoring law (src/micronaut/gravity_field.cpp):
+  GravityScore(µ, Q) = established_nodes(µ) / distance²(Q, µ)
+  established_nodes: count of gram/evidence nodes registered to µ — the well's mass.
+  distance²: squared distance from query Q to µ's position in the product graph.
+
+Topology GMLs supply BOTH inputs to this formula:
+  unfold-graph.gml  → distance metric: Hamming distance between Q3 bit addresses (semantic distance),
+                       C6 step count (phase distance). Adjacency edges define d=1 neighbors.
+                       Combined distance: d²(Q,µ) uses the product-graph path length in Q_3 □ C_6.
+  khanary_topology.gml → gravity center positions: x/y/z coordinates for each micronaut in Q3 space.
+                       MicronautAttraction (vectors.mml): Φ_µ(Q) = Mass_µ · cos(Q, K_µ) · WCR,
+                       where cos(Q, K_µ) is computed from these coordinate vectors.
+  hypercube_Q3.gml  → fold edges (complement b→b̄, weight=1.0): cross-well shortcuts at Hamming
+                       distance 3 that collapse the Q3 diameter from 3 to 2 (FQ3 is 4-regular).
+  hypercube_Q4.gml  → Q4 allocation slot geometry: correct positions for MORPHISM-µ, FIXED-POINT-µ,
+                       and Coordinator-counterpart. These are empty wells — geometry without mass.
+                       Factory::propose_create() mints established_nodes into them; until then
+                       GravityScore(slot, Q) = 0 / distance² = 0 for all Q.
+
+FieldParamRecord GMLs supply field values INSIDE a well, not the well geometry:
+  entropy_gradient_field.gml → entropy thresholds that modulate scoring once Q is in range.
+  tensor_field.gml           → local metric curvature that warps distance near the well center.
+  quantum_field_boundaries.gml → boundary conditions at the well perimeter (wave/refractive).
+  euclidean_gradient_field.gml → potential gradient along the steepest approach path.
+These parameters are cbuffer inputs to the scoring kernel; they do not define well positions
+or the distance metric. Changing a curvature constant in tensor_field.gml does not move a well.
+    </annotation>
+  </semantics>
+
+  <mspace linebreak="newline"/>
+
+  <semantics>
+    <mrow>
+      <mi>FieldParamRecord</mi>
+      <mo>:</mo>
+      <mi>GML</mi>
+      <mo>&#x2243;</mo>
+      <mi>cbuffer</mi>
+      <mo>&#x2295;</mo>
+      <mi>topology_stub</mi>
+    </mrow>
+    <annotation-xml encoding="MathML-Content">
+      <apply>
+        <csymbol cd="urn:kuhul:gml-topology:v1">FieldParamRecord</csymbol>
+        <list>
+          <ci>quantum_field_boundaries.gml</ci>
+          <ci>tensor_field.gml</ci>
+          <ci>entropy_gradient_field.gml</ci>
+          <ci>euclidean_gradient_field.gml</ci>
+        </list>
+        <list>
+          <ci>wave_number</ci>
+          <ci>refractive</ci>
+          <ci>amplitude_re_im</ci>
+          <ci>g_metric_tensor</ci>
+          <ci>riemann_curvature_scalar</ci>
+          <ci>jacobian_determinant</ci>
+          <ci>diffusion_beta_inv</ci>
+          <ci>entropy_bound</ci>
+          <ci>scalar_potential</ci>
+          <ci>curl</ci>
+        </list>
+      </apply>
+    </annotation-xml>
+    <annotation encoding="text/plain">
+FieldParamRecord: field GML files are typed parameter records, not topology descriptions.
+FieldDag::load_gml() parses their node/edge attributes into FieldParamRecord entries and does
+not overlay them into FieldDag adjacency. `field_param_records()` exposes the loaded values;
+`find_field_param_record(field_kind,label,element_kind)` provides exact typed lookup. Parsing
+and lookup establish availability, not an active runtime consumer. Current consumer status:
+
+  quantum_field_boundaries.gml
+    Role: wave/boundary parameter record for VECTOR-µ propagation.
+    Constants: wave_number=2.1/1.4, frequency=0.75, amplitude_re/im, refractive index (3.4 for boundary reset),
+               phase_shift (π/4, π/2), Kirchhoff source (divergence=+1.0) / sink (divergence=-1.0), Robin mixed.
+    Status: parsed and available by exact label. NOT currently forwarded into
+            dispatch_geodesic_propagator(); no boundary-to-runtime-node binding contract exists.
+
+  tensor_field.gml
+    Role: Riemannian metric tensor record for the bundle connection (TensorSubstrate binding layer).
+    Constants: g_00=-0.8524, g_01=g_10=0.0125, g_11=1.1486 (non-Euclidean local metric),
+               jacobian_w=1.0834, riemann_curvature_scalar=-0.412, tensor_rank_p=tensor_rank_q=1.
+    Status: parsed and available by exact label. `VectorMuMicronaut::ExecuteProjection()` now
+            accepts an explicit FieldParamRecord and observation, returning a typed bounded
+            projection with provenance. It does NOT yet implement metric parallel transport,
+            nor is it wired to a production request path.
+
+  entropy_gradient_field.gml
+    Role: Omega gate threshold record for ambiguity gating.
+    Constants: entropy_bound=4.00, diffusion_beta_inv=0.25, entropy_spike threshold (3.67 = high-entropy example).
+    Status: `diffusion_beta_inv` is forwarded to the geodesic propagator cbuffer (b0), with
+            the function argument as fallback. The normalized routing Omega threshold remains
+            the separate provisional constant 0.90; `entropy_bound`/`entropy_spike` are not
+            currently wired into request-router admission.
+    Note: node labels are example sentences illustrating low-entropy (0.15) vs high-entropy (3.82) inputs.
+
+  euclidean_gradient_field.gml
+    Role: conservative gradient field parameters for path-independent semantic progression.
+    Constants: curl_x=curl_y=curl_z=0.0 (conservative — no holonomy), potential_delta=0.75,
+               arc_length=2.8284 (√8 diagonal), scalar_potential range [0.20, 0.95].
+    Status: parsed and available by exact label. Conservative edge records are marked only
+            when all three curl components are present and within tolerance. The propagator
+            does NOT yet consume this gradient; mapping this sample path onto runtime graph
+            edges is not defined.
+
+  metric_graph.gml
+    Role: METRIC-µ provider topology (18 nodes). Distinct from the above — this IS a topology graph,
+    but its authority boundary is different: FoldGraph_B is authoritative; METRIC-µ aggregates
+    providers (VECTOR-µ, SDR, GRAPH, SCX_keybook) and never commits topology B (edge 109).
+    Cross-track metric requires explicit bridge admission (Bridge_JOKE_ELIZA pattern).
+
+  sample.gml — GML parser test fixture (3 nodes, 3 directed edges in a cycle). No field or semantic role.
+    </annotation>
+  </semantics>
+
+  <mspace linebreak="newline"/>
+
+  <semantics>
+    <mrow>
+      <mi>GMLLoadLaw</mi>
+      <mo>:</mo>
+      <mi>load_gml</mi>
+      <mo>&#x2192;</mo>
+      <mi>TensorSubstrate</mi>
+      <mo>&#x2260;</mo>
+      <mi>MicronautEntry</mi>
+    </mrow>
+    <annotation-xml encoding="MathML-Content">
+      <apply>
+        <csymbol cd="urn:kuhul:gml-topology:v1">GMLLoadAuthorityLaw</csymbol>
+        <ci>FieldDag::load_gml</ci>
+        <ci>TensorSubstrate</ci>
+        <ci>MicronautEntry</ci>
+      </apply>
+    </annotation-xml>
+    <annotation encoding="text/plain">
+GMLLoadAuthorityLaw: FieldDag::load_gml() creates TensorSubstrate descriptors, not MicronautEntry objects.
+  For each unique provider_id found in GML nodes, one TensorSubstrate entry is created (residency=HOST_RAM).
+  After dispatch_geodesic_propagator() runs, substrates are promoted to GPU_VRAM_D3D11.
+  A TensorSubstrate with a geometry-source provider_id (e.g. "brain4-expert-34") is projection-only.
+  It MUST NOT be promoted to a MicronautEntry in the registry.
+  Only TrackLoader (JSON track files) and Factory::propose_create() may create MicronautEntry objects.
+  GML topology is geometry and legal-adjacency input; the semantic interpretation is XCFE/phase authority.
+    </annotation>
+  </semantics>
+
+  <annotation encoding="text/plain">
+GMLTopology contract invariants:
+1. G_runtime = Q_n □ C_6 with n=3 (unfold-graph.gml): 48 vertices, deg(v)=5, legal transitions are d_H=1.
+2. Semantic bit schema (b0/b1/b2) is the address space; tracks occupy named positions, not IDs.
+3. Q4 b3=1 positions are ALLOCATION slots; an unoccupied slot is valid — Factory may mint into it.
+4. CCC(n) graphs are 3-regular interconnection substrates; XOR edges = cross-cluster bit-flip routing.
+5. Field GML files (quantum/tensor/entropy/euclidean) are typed parameter records, not topology graphs.
+   Only entropy diffusion beta is currently forwarded to the geodesic propagator. VectorMu accepts an
+   explicit record for bounded numeric projection, but there is no production request-path call and this
+   is not metric parallel transport. Quantum boundary values, Euclidean gradient values, and Omega
+   entropy thresholds are parsed/looked up only. No field record may commit FoldGraph topology B.
+   metric_graph.gml is a topology graph but also carries no B-commit authority.
+6. FieldDag::load_gml() → TensorSubstrate only; MicronautEntry creation is TrackLoader/Factory exclusive.
+7. sample.gml is a parser test fixture; it carries no semantic or topology authority.
+8. GravityWellGeometry: topology GMLs (unfold-graph, khanary_topology, hypercube_Q3/Q4) define well
+   positions and the distance metric for GravityScore(µ,Q) = established_nodes/distance².
+   FieldParamRecord GMLs define field values inside wells (cbuffer inputs to scoring kernels).
+   Q4 allocation slots are empty wells (mass=0) until Factory::propose_create() mints into them.
+  </annotation>
+</math>

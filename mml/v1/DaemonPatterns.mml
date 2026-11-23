@@ -1,0 +1,237 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+  <!--
+    DaemonPatterns.mml
+    Declarative dialogue and pattern-processing contract for cooperating daemons.
+
+    Messages carry typed acts and references. Visible utterances are presentation
+    text; they are not executable commands or transferable authority.
+  -->
+
+  <semantics>
+    <mrow>
+      <mi>DialogueEvent</mi><mo>=</mo>
+      <mo>&#x27E8;</mo><mi>conversation</mi><mo>,</mo><mi>turn</mi><mo>,</mo>
+      <mi>sender</mi><mo>,</mo><mi>recipient</mi><mo>,</mo><mi>act</mi><mo>,</mo>
+      <mi>phase</mi><mo>,</mo><mi>evidenceRefs</mi><mo>,</mo>
+      <mi>utterance</mi><mo>,</mo><mi>provenance</mi><mo>&#x27E9;</mo>
+    </mrow>
+    <annotation-xml encoding="MathML-Content">
+      <apply>
+        <csymbol cd="urn:kuhul:daemon-patterns:v1">DialogueEvent</csymbol>
+        <list>
+          <ci>conversation</ci><ci>turn</ci><ci>sender</ci><ci>recipient</ci>
+          <ci>act</ci><ci>phase</ci><ci>evidenceRefs</ci><ci>utterance</ci><ci>provenance</ci>
+        </list>
+      </apply>
+    </annotation-xml>
+    <annotation encoding="text/plain">
+speech acts include request, question, hypothesis, evidence, objection,
+challenge, answer, proposal, agreement, disagreement, and final_response.
+utterance is display text. Typed fields and referenced evidence carry protocol meaning.
+    </annotation>
+  </semantics>
+
+  <mspace linebreak="newline"/>
+
+  <semantics>
+    <mrow>
+      <mi>PromptField</mi><mo>=</mo>
+      <mo>&#x27E8;</mo><mi>userPrompt</mi><mo>,</mo><mi>keyDefinitions</mi><mo>,</mo>
+      <mi>aimlMatches</mi><mo>,</mo><mi>gramEvidence</mi><mo>,</mo>
+      <mi>vectorEvidence</mi><mo>,</mo><mi>externalEvidence</mi><mo>&#x27E9;</mo>
+    </mrow>
+    <annotation-xml encoding="MathML-Content">
+      <apply>
+        <csymbol cd="urn:kuhul:daemon-patterns:v1">PromptField</csymbol>
+        <list><ci>userPrompt</ci><ci>keyDefinitions</ci><ci>aimlMatches</ci>
+          <ci>gramEvidence</ci><ci>vectorEvidence</ci><ci>externalEvidence</ci></list>
+      </apply>
+    </annotation-xml>
+    <annotation encoding="text/plain">
+Each source occupies a provenance-tagged field lane. Key definitions and AIML
+matches contribute evidence; they do not silently become verified facts.
+Unigrams, bigrams, and trigrams may support priors; longer grams may retrieve
+frameworks or history. No gram is executable merely because it matched.
+    </annotation>
+  </semantics>
+
+  <mspace linebreak="newline"/>
+
+  <semantics>
+    <mrow>
+      <mi>DialogueCycle</mi><mo>=</mo>
+      <mi>observe</mi><mo>&#x2192;</mo><mi>field</mi><mo>&#x2192;</mo>
+      <mi>question</mi><mo>&#x2192;</mo><mi>candidate</mi><mo>&#x2192;</mo>
+      <mi>critic</mi><mo>&#x2192;</mo><mi>verify</mi><mo>&#x2192;</mo><mi>respond</mi>
+    </mrow>
+    <annotation-xml encoding="MathML-Content">
+      <apply>
+        <csymbol cd="urn:kuhul:daemon-patterns:v1">BoundedDialogueCycle</csymbol>
+        <list><ci>observe</ci><ci>field</ci><ci>question</ci><ci>candidate</ci>
+          <ci>critic</ci><ci>verify</ci><ci>respond</ci></list>
+      </apply>
+    </annotation-xml>
+    <annotation encoding="text/plain">
+Neural Grammar Core may classify intent, match grammar, and ask clarifying
+questions. KHANARY may retrieve field evidence and propose candidate responses.
+Exploration patterns may challenge candidates; critic patterns assess their
+support. The response owner emits the final answer or a necessary question.
+    </annotation>
+  </semantics>
+
+  <mspace linebreak="newline"/>
+
+  <semantics>
+    <mrow>
+      <mi>QuestionIdentity</mi><mo>=</mo>
+      <mo>&#x27E8;</mo><mi>questionId</mi><mo>,</mo><mi>origin</mi><mo>,</mo>
+      <mi>target</mi><mo>,</mo><mi>intentGap</mi><mo>,</mo>
+      <mi>parentQuestionId</mi><mo>,</mo><mi>status</mi><mo>&#x27E9;</mo>
+    </mrow>
+    <annotation-xml encoding="MathML-Content">
+      <apply>
+        <csymbol cd="urn:kuhul:daemon-patterns:v1">QuestionRecord</csymbol>
+        <list><ci>questionId</ci><ci>origin</ci><ci>target</ci><ci>intentGap</ci>
+          <ci>parentQuestionId</ci><ci>status</ci></list>
+      </apply>
+    </annotation-xml>
+    <annotation encoding="text/plain">
+Question IDs are stable within the conversation. Status progresses among
+proposed, asked, answered, resolved, superseded, and unresolved. Parent links
+identify follow-ups and support duplicate detection and replay.
+    </annotation>
+  </semantics>
+
+  <mspace linebreak="newline"/>
+
+  <semantics>
+    <mrow>
+      <mi>Stop</mi><mo>=</mo>
+      <mi>supportedAnswer</mi><mo>&#x2228;</mo><mi>clarificationRequired</mi>
+      <mo>&#x2228;</mo><mi>budgetExhausted</mi><mo>&#x2228;</mo><mi>cancelled</mi>
+    </mrow>
+    <annotation-xml encoding="MathML-Content">
+      <apply>
+        <csymbol cd="urn:kuhul:daemon-patterns:v1">TerminationCondition</csymbol>
+        <or/><ci>supportedAnswer</ci><ci>clarificationRequired</ci>
+        <ci>budgetExhausted</ci><ci>cancelled</ci>
+      </apply>
+    </annotation-xml>
+    <annotation encoding="text/plain">
+Every request and response consumes a bounded dialogue turn. Repeated or
+equivalent questions are deduplicated. A daemon may return uncertainty instead
+of manufacturing consensus when evidence is insufficient or budgets expire.
+    </annotation>
+  </semantics>
+
+  <mspace linebreak="newline"/>
+
+  <semantics>
+    <mrow>
+      <mi>PeerMessage</mi><mo>&#x2260;</mo><mi>Admission</mi>
+      <mspace width="1em"/>
+      <mi>Proposal</mi><mo>&#x2260;</mo><mi>Execution</mi>
+    </mrow>
+    <annotation-xml encoding="MathML-Content">
+      <apply>
+        <csymbol cd="urn:kuhul:daemon-patterns:v1">AuthoritySeparation</csymbol>
+        <ci>PeerMessage</ci><ci>Admission</ci><ci>Proposal</ci><ci>Execution</ci>
+      </apply>
+    </annotation-xml>
+    <annotation encoding="text/plain">
+A peer cannot grant its recipient capabilities or transfer an admission decision.
+Requested actions must be validated against local registration, delegated scope,
+resource budget, and XCFE policy at the execution boundary. Memory and learning
+updates retain provenance and require their own authorized commit path.
+    </annotation>
+  </semantics>
+
+  <mspace linebreak="newline"/>
+
+  <semantics>
+    <mrow>
+      <mi>DistilledPattern</mi><mo>=</mo>
+      <mo>&#x27E8;</mo><mi>source</mi><mo>,</mo><mi>topic</mi><mo>,</mo>
+      <mi>phase</mi><mo>,</mo><mi>aimlPair</mi><mo>,</mo>
+      <mi>discussionTemplate</mi><mo>,</mo><mi>provenance</mi><mo>&#x27E9;</mo>
+    </mrow>
+    <annotation-xml encoding="MathML-Content">
+      <apply>
+        <csymbol cd="urn:kuhul:daemon-patterns:v1">DistilledPattern</csymbol>
+        <list><ci>source</ci><ci>topic</ci><ci>phase</ci>
+          <ci>aimlPair</ci><ci>discussionTemplate</ci><ci>provenance</ci></list>
+      </apply>
+    </annotation-xml>
+    <annotation encoding="text/plain">
+A distilled pattern is an LLM-generated AIML pair or discussion template produced
+by tools/gemma-distill.py and stored in data/alice/khanary-distilled.aiml or
+data/micronaut/distilled-questions.json. source=gemma-distill; provenance chain
+is preserved. Distilled patterns are candidate evidence, not verified facts; they
+enter the DialogueCycle as gramEvidence in the PromptField, not as admitted rules.
+    </annotation>
+  </semantics>
+
+  <mspace linebreak="newline"/>
+
+  <semantics>
+    <mrow>
+      <mi>DaemonRole</mi><mo>=</mo>
+      <mo>&#x27E8;</mo><mi>name</mi><mo>,</mo><mi>kind</mi><mo>,</mo>
+      <mi>phase</mi><mo>,</mo><mi>temperature</mi><mo>,</mo><mi>role</mi><mo>&#x27E9;</mo>
+    </mrow>
+    <annotation-xml encoding="MathML-Content">
+      <apply>
+        <csymbol cd="urn:kuhul:daemon-patterns:v1">DaemonRole</csymbol>
+        <list><ci>name</ci><ci>kind</ci><ci>phase</ci><ci>temperature</ci><ci>role</ci></list>
+      </apply>
+    </annotation-xml>
+    <annotation encoding="text/plain">
+Each daemon carries a declared phase, sampling temperature, and role string.
+Phase-driver daemons (pop/wo/yax/sek/chen/xul) bias the LLM toward the
+phase-appropriate epistemic posture. Specialist daemons (eliza, alice, think,
+reason, expand, coder, librarian) carry phase-specific capabilities declared in
+drivers/micronauts/*.json. Temperature is an evidence-generation parameter, not
+authority. DaemonRole records are read-only at dispatch time; the MML contract
+governing each daemon's authority boundary lives in data/grammar/daemon-{name}.mml.
+    </annotation>
+  </semantics>
+
+  <mspace linebreak="newline"/>
+
+  <semantics>
+    <mrow>
+      <mi>Sheogorath</mi><mo>&#x29F8;</mo><mi>Jyggalag</mi>
+      <mo>=</mo><mi>EntropyCyclePair</mi>
+    </mrow>
+    <annotation-xml encoding="MathML-Content">
+      <apply>
+        <csymbol cd="urn:kuhul:daemon-patterns:v1">EntropyCyclePair</csymbol>
+        <ci>sheogorath</ci><ci>jyggalag</ci>
+      </apply>
+    </annotation-xml>
+    <annotation encoding="text/plain">
+Sheogorath (T=0.97, Xul phase) generates maximum-entropy candidate states.
+Jyggalag (T=0.00, Ch'en phase) collapses the candidate set to a single surviving
+state. Together they implement the entropy-collapse pattern: expand → verify →
+collapse. Neither can commit topology independently; Xul commit authority requires
+the full Proposal → Ch'en → XCFE → Xul path. The Greymarch event (total-order
+collapse) is Jyggalag's terminal output record, not a topology mutation. This
+pair must appear as a matched unit in any DialogueCycle that uses high-temperature
+generation; Sheogorath without Jyggalag leaves the candidate set uncollapsed.
+    </annotation>
+  </semantics>
+
+  <annotation encoding="text/plain">
+DaemonPatterns contract invariants:
+1. Human-visible dialogue and machine protocol fields are separate.
+2. Every question, claim, and observation retains identity and provenance.
+3. Pattern matches and retrieved vectors are evidence, not truth declarations.
+4. Dialogue is bounded, deduplicated, replayable, and side-effect-free by default.
+5. Daemon proposals never bypass local admission, XCFE, or host authorization.
+6. This MML document describes a contract; it does not start a daemon or enable IPC.
+7. Distilled patterns (gemma-distill provenance) enter as gramEvidence, not admitted rules.
+8. DaemonRole temperature is an evidence parameter; it does not modify phase authority.
+9. The EntropyCyclePair (Sheogorath/Jyggalag) must appear as a matched unit; uncollapsed entropy is not a terminal state.
+  </annotation>
+</math>

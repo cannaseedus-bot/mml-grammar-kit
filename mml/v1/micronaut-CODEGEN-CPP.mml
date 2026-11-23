@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+
+  <!--
+    micronaut-CODEGEN-CPP.mml
+
+    CODEGEN-CPP-µ contract:
+      Generates C++/HLSL code for KHANARY native targets, supporting phase and track management.
+      Cannot generate code for non-KHANARY native targets or unsupported architectures.
+
+    Content dictionary used here: urn:kuhul:micronaut-CODEGEN-CPP:v1
+  -->
+
+  <!-- ── Identity ──────────────────────────────────────────────────────────── -->
+  <semantics>
+    <mrow>
+      <mi>CODEGEN-CPP</mi>
+      <mo>_</mo>
+      <mi>&#x03BC;</mi>
+      <mo>=</mo>
+      <mo>&#x27E8;</mo>
+      <mi>phase</mi><mo>,</mo>
+      <mi>T</mi><mo>,</mo>
+      <mi>role</mi>
+      <mo>&#x27E9;</mo>
+    </mrow>
+    <annotation-xml encoding="MathML-Content">
+      <apply>
+        <eq/>
+        <apply><csymbol cd="urn:kuhul:micronaut-CODEGEN-CPP:v1">Identity</csymbol><ci>CODEGEN-CPP</ci></apply>
+        <list>
+          <cn>Sek</cn>
+          <cn>0.15</cn>
+          <ci>role</ci>
+        </list>
+      </apply>
+    </annotation-xml>
+    <annotation encoding="text/plain">
+CODEGEN-CPP_mu = &lt;phase=Sek, T=0.15, role&gt;
+Role: C++/HLSL code generation for KHANARY native targets
+Phase angle: theta = &#x03C0;
+    </annotation>
+  </semantics>
+
+  <mspace linebreak="newline" indentalign="center"/>
+
+  <!-- ── Capability ────────────────────────────────────────────────────────── -->
+  <semantics>
+    <mrow>
+      <mi>Cap</mi>
+      <mo>(</mo><mi>CODEGEN-CPP</mi><mo>)</mo>
+      <mo>=</mo>
+      <mi>GRANTED</mi>
+    </mrow>
+    <annotation-xml encoding="MathML-Content">
+      <apply>
+        <csymbol cd="urn:kuhul:micronaut-CODEGEN-CPP:v1">Capability</csymbol>
+        <ci>CODEGEN-CPP</ci>
+        <ci>granted</ci>
+      </apply>
+    </annotation-xml>
+    <annotation encoding="text/plain">
+CAN: Generates C++/HLSL code for KHANARY native targets, supporting phase and track management.
+SUPPLIES: Provides WCR and XCFE interfaces, supports gram and Xul track management.
+    </annotation>
+  </semantics>
+
+  <mspace linebreak="newline" indentalign="center"/>
+
+  <!-- ── Authority boundary ────────────────────────────────────────────────── -->
+  <semantics>
+    <mrow>
+      <mi>&#x0394;B</mi>
+      <mo>&#x2209;</mo>
+      <mi>Auth</mi>
+      <mo>(</mo><mi>CODEGEN-CPP</mi><mo>)</mo>
+    </mrow>
+    <annotation-xml encoding="MathML-Content">
+      <apply>
+        <csymbol cd="urn:kuhul:micronaut-CODEGEN-CPP:v1">AuthorityBoundary</csymbol>
+        <apply><notin/><ci>DeltaTopology</ci><ci>Auth_CODEGEN-CPP</ci></apply>
+      </apply>
+    </annotation-xml>
+    <annotation encoding="text/plain">
+CANNOT: Cannot generate code for non-KHANARY native targets or unsupported architectures.
+BOUNDARY: Does not have authority over Ch'en verdict or fold topology.
+Delta_B not-in Auth(CODEGEN-CPP): topology commits require Proposal -&gt; Ch'en -&gt; XCFE -&gt; Xul.
+    </annotation>
+  </semantics>
+
+  <mspace linebreak="newline" indentalign="center"/>
+
+  <!-- ── WCR scoring position ───────────────────────────────────────────────── -->
+  <semantics>
+    <mrow>
+      <mi>S</mi>
+      <mo>=</mo>
+      <msub><mi>W</mi><mi>&#x03BC;</mi></msub>
+      <mo>&#x22C5;</mo>
+      <msub><mi>C</mi><mi>&#x03BC;</mi></msub>
+      <mo>&#x22C5;</mo>
+      <msub><mi>R</mi><mi>&#x03BC;</mi></msub>
+      <mo>(</mo><mi>Q</mi><mo>)</mo>
+    </mrow>
+    <annotation-xml encoding="MathML-Content">
+      <apply>
+        <eq/>
+        <ci>S</ci>
+        <apply>
+          <times/>
+          <apply><selector/><ci>W</ci><ci>mu</ci></apply>
+          <apply><selector/><ci>C</ci><ci>mu</ci></apply>
+          <apply>
+            <csymbol cd="urn:kuhul:micronaut-CODEGEN-CPP:v1">Relevance</csymbol>
+            <ci>Q</ci>
+          </apply>
+        </apply>
+      </apply>
+    </annotation-xml>
+    <annotation encoding="text/plain">
+S = W_mu * C_mu * R_mu(Q)
+W_mu: static weight for CODEGEN-CPP in its capability family.
+C_mu: confidence earned through Ch'en-verified outcomes.
+R_mu(Q): query-relevance score at phase Sek (T=0.15).
+Eligibility: CODEGEN-CPP is admitted to the candidate set only when requires(op) subset-of capabilities(CODEGEN-CPP).
+    </annotation>
+  </semantics>
+
+  <semantics>
+    <mrow>
+      <mi>SharedPatternKernelRef</mi><mo>=</mo>
+      <mtext>data/grammar/PatternKernelCalls.mml</mtext>
+    </mrow>
+    <annotation-xml encoding="MathML-Content">
+      <apply>
+        <csymbol cd="urn:kuhul:pattern-kernel-calls:v1">UsesSharedPatternKernel</csymbol>
+        <list><ci>MicronautPatterns</ci><ci>DaemonPatterns</ci><ci>SraiOperators</ci>
+          <ci>aiml-functions</ci><ci>map-filter-fold</ci><ci>CheeseCritic</ci></list>
+      </apply>
+    </annotation-xml>
+    <annotation encoding="text/plain">
+This daemon/Micronaut uses the shared typed pattern-call contract. It invokes
+only registered operations applicable to its role, phase, context, and scope;
+the shared reference does not grant capabilities or execution authority.
+    </annotation>
+  </semantics>
+
+</math>

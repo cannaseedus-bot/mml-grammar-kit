@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+  <!-- Shared pattern-call surface for all daemon and Micronaut contracts. -->
+  <semantics>
+    <mrow>
+      <mi>PatternKernel</mi><mo>=</mo>
+      <mo>&#x27E8;</mo><mi>recognize</mi><mo>,</mo><mi>bind</mi><mo>,</mo>
+      <mi>compose</mi><mo>,</mo><mi>dispatch</mi><mo>,</mo>
+      <mi>criticize</mi><mo>,</mo><mi>induce</mi><mo>&#x27E9;</mo>
+    </mrow>
+    <annotation-xml encoding="MathML-Content">
+      <apply>
+        <csymbol cd="urn:kuhul:pattern-kernel-calls:v1">SharedPatternKernel</csymbol>
+        <list><ci>MicronautPatterns</ci><ci>DaemonPatterns</ci><ci>SraiOperators</ci>
+          <ci>aiml-functions</ci><ci>map-filter-fold</ci><ci>CheeseCritic</ci></list>
+      </apply>
+    </annotation-xml>
+    <annotation encoding="text/plain">
+All daemon and Micronaut contracts share this typed pattern-call surface.
+Each consumer invokes only the operations appropriate to its role, phase,
+scope, and registered capabilities. Shared use does not grant execution rights.
+    </annotation>
+  </semantics>
+
+  <mspace linebreak="newline"/>
+
+  <semantics>
+    <mrow>
+      <mi>CallPattern</mi><mo>(</mo><mi>consumer</mi><mo>,</mo><mi>request</mi><mo>)</mo>
+      <mo>&#x2192;</mo><mo>&#x27E8;</mo><mi>typedBindings</mi><mo>,</mo>
+      <mi>evidenceRefs</mi><mo>,</mo><mi>provenance</mi><mo>&#x27E9;</mo>
+    </mrow>
+    <annotation-xml encoding="MathML-Content">
+      <apply>
+        <csymbol cd="urn:kuhul:pattern-kernel-calls:v1">PatternCall</csymbol>
+        <ci>consumer</ci><ci>request</ci>
+        <list><ci>typedBindings</ci><ci>evidenceRefs</ci><ci>provenance</ci></list>
+      </apply>
+    </annotation-xml>
+    <annotation encoding="text/plain">
+Pattern matching and AIML/SRAI redirects resolve typed candidates and bindings.
+They do not assert truth, dispatch an unregistered handler, or transfer another
+daemon's authority. Dispatch uses local registration and XCFE admission.
+    </annotation>
+  </semantics>
+
+  <mspace linebreak="newline"/>
+
+  <semantics>
+    <mrow>
+      <mi>Compose</mi><mo>=</mo><mi>Fold</mi><mo>(</mo><mi>oplus</mi><mo>,</mo>
+      <mi>seed</mi><mo>,</mo><mi>Filter</mi><mo>(</mo><mi>P</mi><mo>,</mo>
+      <mi>Map</mi><mo>(</mo><mi>f</mi><mo>,</mo><mi>X</mi><mo>)</mo><mo>)</mo><mo>)</mo>
+    </mrow>
+    <annotation-xml encoding="MathML-Content">
+      <apply><csymbol cd="urn:kuhul:pattern-kernel-calls:v1">Compose</csymbol>
+        <ci>map-filter-fold.mml</ci><ci>typedInputs</ci><ci>declaredOrder</ci>
+      </apply>
+    </annotation-xml>
+    <annotation encoding="text/plain">
+Map, Filter, and collection Fold are reusable functional transforms described
+in map-filter-fold.mml. The consumer declares types, predicates, effects, and
+order. Collection Fold is not the K'UHUL six-phase fold lifecycle.
+    </annotation>
+  </semantics>
+
+  <mspace linebreak="newline"/>
+
+  <semantics>
+    <mrow>
+      <mi>InducePattern</mi><mo>(</mo><mi>gap</mi><mo>,</mo><mi>sourcePatterns</mi><mo>,</mo>
+      <mi>evidence</mi><mo>)</mo><mo>&#x2192;</mo><mi>PatternProposal</mi>
+      <mo>&#x2192;</mo><mi>criticReview</mi><mo>&#x2192;</mo><mi>admission</mi>
+    </mrow>
+    <annotation-xml encoding="MathML-Content">
+      <apply>
+        <csymbol cd="urn:kuhul:pattern-kernel-calls:v1">FactoryPatternInduction</csymbol>
+        <ci>gap</ci><ci>sourcePatterns</ci><ci>evidence</ci><ci>PatternProposal</ci>
+      </apply>
+    </annotation-xml>
+    <annotation encoding="text/plain">
+FACTORY-µ may reuse, compose, generalize, specialize, or mutate registered
+patterns to address an evidenced capability or coverage gap. Equivalent
+patterns are reused instead of duplicated. A material, evidence-backed change
+to slots, constraints, or bindings can produce a versioned child proposal with
+structural delta, lineage, and provenance. CheeseCritic and applicable
+validators review it; registration or activation requires the owner's
+authorized admission path. Induction never writes directly to the shared
+pattern registry or promotes generated claims to facts.
+    </annotation>
+  </semantics>
+
+  <mspace linebreak="newline"/>
+
+  <semantics>
+    <mrow>
+      <mi>DeriveInContext</mi><mo>(</mo><mi>P</mi><mo>,</mo><mi>context</mi><mo>)</mo>
+      <mo>&#x2192;</mo><mo>&#x27E8;</mo><mi>P_candidate</mi><mo>,</mo><mi>delta</mi><mo>,</mo><mi>lineage</mi><mo>&#x27E9;</mo>
+    </mrow>
+    <annotation-xml encoding="MathML-Content">
+      <apply>
+        <csymbol cd="urn:kuhul:pattern-kernel-calls:v1">ContextConditionedPatternDerivation</csymbol>
+        <ci>P</ci><ci>context</ci>
+        <list><ci>P_candidate</ci><ci>delta</ci><ci>lineage</ci></list>
+      </apply>
+    </annotation-xml>
+    <annotation encoding="text/plain">
+A new context can instantiate or adapt a known pattern. The factory first
+canonicalizes and compares candidates: an equivalent pattern is reused, while
+a materially different, evidence-backed context produces a derived candidate.
+It records changed slots, constraints, bindings, and evidence as a structural
+delta. A child retains its parent lineage and never overwrites the parent.
+    </annotation>
+  </semantics>
+
+  <mspace linebreak="newline"/>
+
+  <semantics>
+    <mrow>
+      <mi>ValidatePattern</mi><mo>(</mo><mi>P_candidate</mi><mo>,</mo><mi>delta</mi><mo>,</mo><mi>policy</mi><mo>)</mo>
+      <mo>&#x2192;</mo><mo>{</mo><mi>valid</mi><mo>,</mo><mi>revise</mi><mo>,</mo><mi>reject</mi><mo>}</mo>
+    </mrow>
+    <annotation-xml encoding="MathML-Content">
+      <apply>
+        <csymbol cd="urn:kuhul:pattern-kernel-calls:v1">PatternDeltaValidation</csymbol>
+        <ci>P_candidate</ci><ci>delta</ci><ci>policy</ci>
+      </apply>
+    </annotation-xml>
+    <annotation encoding="text/plain">
+Validation checks grammar and types, binding scope, provenance, conflicts,
+counterexamples, phase/effect constraints, and the declared novelty or
+specialization policy. Similarity to a prior pattern is evidence of lineage,
+not proof of correctness. A valid result is a validated proposal; registry
+creation or activation still follows explicit owner admission and versioning.
+    </annotation>
+  </semantics>
+
+  <annotation encoding="text/plain">
+Shared call invariants:
+1. Pattern sources are versioned and provenance-bearing.
+2. Consumers call registered pattern functions through typed inputs and outputs.
+3. Critic results are evidence, not truth or execution permission.
+4. Context-derived patterns retain parent lineage and explicit structural deltas.
+5. Validation is distinct from registry admission; a validated proposal is not activated automatically.
+6. Local XCFE policy and host authorization apply to every state-changing operation.
+  </annotation>
+</math>

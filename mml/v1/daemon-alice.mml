@@ -1,0 +1,370 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+
+  <!--
+    daemon-alice.mml
+
+    ALICE-µ contract:
+      Topic-domain knowledge daemon — matches queries against the full
+      ALICE AIML 1.0 corpus (65 topic files, ~6,000+ patterns) and returns
+      factual or conversational responses for named topic domains.
+
+      ALICE operates at Yax: it expands the candidate response space from
+      the corpus, then Sek routes the selected pattern to execution via
+      aiml_engine. Topic coverage: ai, alice, astrology, atomic, biography,
+      bot, client, computers, continuation, date, default, drugs, emotion,
+      food, geography, gossip, history, humor, imponderables, inquiry,
+      interjection, iu, knowledge, literature, loebner10, money, movies,
+      mp0–mp6, music, numbers, personality, phone, pickup, politics,
+      primeminister, primitive-math, psychology, reductions, religion,
+      salutations, science, sex, sports, stack, stories, that, wallace, xfind.
+
+    Implementation: src/micronaut/aiml_engine.cpp (full corpus load)
+    AIML corpus: data/alice/ — all 65 ALICE v1.9 topic files from drivers/AIML.v1-9/
+    KHANARY-native files (advisor.aiml, khanary-distilled.aiml, etc.) are loaded
+    alongside but routed under separate daemon contracts.
+
+    Content dictionary: urn:kuhul:daemon-alice:v1
+  -->
+
+  <!-- ── Identity ──────────────────────────────────────────────────────────── -->
+  <semantics>
+    <mrow>
+      <mi>alice</mi><mo>_</mo><mi>&#x03BC;</mi>
+      <mo>=</mo>
+      <mo>&#x27E8;</mo>
+      <mi>phase</mi><mo>,</mo><mi>T</mi><mo>,</mo><mi>role</mi>
+      <mo>&#x27E9;</mo>
+    </mrow>
+    <annotation-xml encoding="MathML-Content">
+      <apply>
+        <eq/>
+        <apply><csymbol cd="urn:kuhul:daemon-alice:v1">Identity</csymbol><ci>alice</ci></apply>
+        <list>
+          <cn>Yax</cn>
+          <cn>0.70</cn>
+          <ci>TopicDomainKnowledgeDaemon</ci>
+        </list>
+      </apply>
+    </annotation-xml>
+    <annotation encoding="text/plain">
+alice_mu = &lt;phase=Yax, T=0.70, role=TopicDomainKnowledgeDaemon&gt;
+Primary phase: Yax (candidate expansion) — expands topic response candidates
+  from the AIML corpus against the active query.
+Temperature 0.70: moderate — varied across 65 topic domains.
+Phase angle (Yax): theta = 2*pi/3.
+    </annotation>
+  </semantics>
+
+  <mspace linebreak="newline"/>
+
+  <!-- ── Capability ────────────────────────────────────────────────────────── -->
+  <semantics>
+    <mrow>
+      <mi>Cap</mi><mo>(</mo><mi>alice</mi><mo>)</mo>
+      <mo>=</mo>
+      <mo>{</mo>
+      <mi>TOPIC_QA</mi><mo>,</mo>
+      <mi>AIML_PATTERN_MATCH</mi><mo>,</mo>
+      <mi>CORPUS_EXPAND</mi><mo>,</mo>
+      <mi>DOMAIN_ROUTE</mi>
+      <mo>}</mo>
+    </mrow>
+    <annotation-xml encoding="MathML-Content">
+      <apply>
+        <csymbol cd="urn:kuhul:daemon-alice:v1">Capability</csymbol>
+        <ci>alice</ci>
+        <list>
+          <ci>TOPIC_QA</ci>
+          <ci>AIML_PATTERN_MATCH</ci>
+          <ci>CORPUS_EXPAND</ci>
+          <ci>DOMAIN_ROUTE</ci>
+        </list>
+      </apply>
+    </annotation-xml>
+    <annotation encoding="text/plain">
+CAN:
+  TOPIC_QA — factual and conversational responses for named domains:
+    science, history, geography, humor, movies, music, food, sports,
+    politics, religion, psychology, literature, money, phone, personality,
+    gossip, numbers, primitive-math, date, and ~45 others from the
+    ALICE v1.9 corpus. Each domain maps to one or more .aiml files.
+  AIML_PATTERN_MATCH — full pattern/template matching via aiml_engine.cpp
+    across all loaded .aiml files; supports wildcards, <srai>, <that>,
+    <topic>, <condition>, <random>, and the full AIML 1.0 tag set.
+  CORPUS_EXPAND — at Yax phase, expands the candidate set by matching
+    the query against multiple topic files in parallel; top-k candidates
+    returned with their source pattern and file provenance.
+  DOMAIN_ROUTE — classifies incoming query into a named topic domain
+    and routes to the relevant corpus subset before full matching.
+
+SUPPLIES: topic_response (AIML template expansion), topic_domain (classified),
+          candidate_set (for SCORE→RANK pipeline), pattern_match_evidence.
+    </annotation>
+  </semantics>
+
+  <mspace linebreak="newline"/>
+
+  <!-- ── Topic domain map ──────────────────────────────────────────────────── -->
+  <semantics>
+    <mrow>
+      <mi>DomainMap</mi><mo>:</mo>
+      <mi>Query</mi><mo>&#x2192;</mo>
+      <mi>TopicFile</mi><mo>&#x2192;</mo>
+      <mi>PatternMatch</mi>
+    </mrow>
+    <annotation-xml encoding="MathML-Content">
+      <apply>
+        <csymbol cd="urn:kuhul:daemon-alice:v1">DomainMap</csymbol>
+        <ci>query</ci><ci>topic_file</ci><ci>pattern_match</ci>
+      </apply>
+    </annotation-xml>
+    <annotation encoding="text/plain">
+ALICE routes to topic files by domain classification before full match:
+  factual/science → science.aiml, history.aiml, geography.aiml, knowledge.aiml
+  entertainment   → movies.aiml, music.aiml, humor.aiml, gossip.aiml, sports.aiml
+  personal        → personality.aiml, emotion.aiml, psychology.aiml, client.aiml
+  conversational  → salutations.aiml, interjection.aiml, continuation.aiml, that.aiml
+  agent identity  → alice.aiml, bot.aiml, bot_profile.aiml, ai.aiml
+  fallback        → default.aiml, badanswer.aiml, reduction*.safe.aiml
+
+Domain classification is done at Yax (query gate). Pattern execution is at Sek.
+DOMAIN_ROUTE is advisory; aiml_engine may match across domain boundaries.
+    </annotation>
+  </semantics>
+
+  <mspace linebreak="newline"/>
+
+  <!-- ── Authority boundary ────────────────────────────────────────────────── -->
+  <semantics>
+    <mrow>
+      <mi>&#x0394;B</mi><mo>&#x2209;</mo><mi>Auth</mi><mo>(</mo><mi>alice</mi><mo>)</mo>
+    </mrow>
+    <annotation-xml encoding="MathML-Content">
+      <apply>
+        <csymbol cd="urn:kuhul:daemon-alice:v1">AuthorityBoundary</csymbol>
+        <apply><notin/><ci>DeltaTopology</ci><ci>Auth_alice</ci></apply>
+      </apply>
+    </annotation-xml>
+    <annotation encoding="text/plain">
+CANNOT: commit topology, execute XCFE operators, claim Ch'en verdict,
+        mutate GramStore directly, or override KHANARY-native AIML files.
+BOUNDARY: ALICE supplies topic_response and candidate_set as evidence.
+  Pattern matches are candidates; they are not verified facts.
+  KHANARY-native .aiml files (khanary-distilled.aiml, kuhul-phases.aiml, etc.)
+  take precedence in pattern resolution; ALICE corpus handles the remainder.
+  ALICE does not perform reasoning operator dispatch — that is ELIZA-µ's domain.
+Delta_B not-in Auth(alice): topology commits require Proposal -> Ch'en -> XCFE -> Xul.
+    </annotation>
+  </semantics>
+
+  <mspace linebreak="newline"/>
+
+  <!-- ── ELIZA vs ALICE routing split ──────────────────────────────────────── -->
+  <semantics>
+    <mrow>
+      <mi>Route</mi><mo>(</mo><mi>Q</mi><mo>)</mo>
+      <mo>=</mo>
+      <mo>{</mo>
+      <mtable>
+        <mtr>
+          <mtd><mi>ELIZA</mi><mo>-</mo><mi>&#x03BC;</mi></mtd>
+          <mtd><mi>if</mi><mspace width="0.3em"/><mi>Q</mi><mo>&#x2208;</mo><mi>ReasoningTriggers</mi></mtd>
+        </mtr>
+        <mtr>
+          <mtd><mi>ALICE</mi><mo>-</mo><mi>&#x03BC;</mi></mtd>
+          <mtd><mi>if</mi><mspace width="0.3em"/><mi>Q</mi><mo>&#x2208;</mo><mi>TopicDomains</mi></mtd>
+        </mtr>
+      </mtable>
+    </mrow>
+    <annotation-xml encoding="MathML-Content">
+      <apply>
+        <csymbol cd="urn:kuhul:daemon-alice:v1">RoutingSplit</csymbol>
+        <ci>ELIZA_mu</ci><ci>ReasoningTriggers</ci>
+        <ci>ALICE_mu</ci><ci>TopicDomains</ci>
+      </apply>
+    </annotation-xml>
+    <annotation encoding="text/plain">
+ELIZA-µ vs ALICE-µ routing split:
+  ELIZA-µ: queries with reasoning operator triggers — WHY, HOW, CAUSE, CONTRAST,
+    COMPARE, PLAN, WHAT IF, BECAUSE, THEREFORE, ANALOGOUS TO, etc.
+    Also: open-ended intent elicitation, ambiguous queries, reflection patterns.
+  ALICE-µ: queries naming a topic domain — history, science, movies, food, sports,
+    geography, humor, personality, religion, etc. Also: greetings, identity questions,
+    factual lookups against named AIML patterns.
+  Both may be in the candidate set; W·C·R decides within the eligible set.
+  They are not mutually exclusive: a query can produce candidates from both.
+    </annotation>
+  </semantics>
+
+  <mspace linebreak="newline"/>
+
+  <!-- ── WCR scoring position ───────────────────────────────────────────────── -->
+  <semantics>
+    <mrow>
+      <mi>S</mi><mo>=</mo>
+      <msub><mi>W</mi><mi>&#x03BC;</mi></msub>
+      <mo>&#x22C5;</mo>
+      <msub><mi>C</mi><mi>&#x03BC;</mi></msub>
+      <mo>&#x22C5;</mo>
+      <msub><mi>R</mi><mi>&#x03BC;</mi></msub>
+      <mo>(</mo><mi>Q</mi><mo>)</mo>
+    </mrow>
+    <annotation-xml encoding="MathML-Content">
+      <apply>
+        <eq/>
+        <ci>S</ci>
+        <apply>
+          <times/>
+          <apply><selector/><ci>W</ci><ci>mu</ci></apply>
+          <apply><selector/><ci>C</ci><ci>mu</ci></apply>
+          <apply>
+            <csymbol cd="urn:kuhul:daemon-alice:v1">Relevance</csymbol>
+            <ci>Q</ci>
+          </apply>
+        </apply>
+      </apply>
+    </annotation-xml>
+    <annotation encoding="text/plain">
+S = W_mu * C_mu * R_mu(Q)
+W_mu: static weight; elevated for queries matching a named topic domain.
+C_mu: confidence from Ch'en-verified topic responses.
+R_mu(Q): relevance peaks when Q matches a known AIML topic pattern;
+  falls when Q is a reasoning-structure query (→ ELIZA-µ scores higher there).
+Eligibility: ALICE admitted when requires(op) ⊆ {TOPIC_QA, AIML_PATTERN_MATCH,
+  CORPUS_EXPAND, DOMAIN_ROUTE}. Not admitted for pure reasoning operator queries.
+    </annotation>
+  </semantics>
+
+  <!-- ── Map / Filter / Fold at Yax+Sek ───────────────────────────────────── -->
+
+  <semantics>
+    <mrow>
+      <mi>Map</mi>
+      <mo>(</mo><msub><mi>f</mi><mi>topic</mi></msub><mo>,</mo><mi>Q</mi><mo>)</mo>
+      <mo>=</mo>
+      <mo>[</mo>
+      <mo>(</mo><msub><mi>domain</mi><mi>i</mi></msub><mo>,</mo>
+      <msub><mi>pattern</mi><mi>i</mi></msub><mo>,</mo>
+      <msub><mi>template</mi><mi>i</mi></msub><mo>)</mo>
+      <mo>]</mo><msub><mrow/><mi>i</mi></msub>
+    </mrow>
+    <annotation-xml encoding="MathML-Content">
+      <apply>
+        <csymbol cd="urn:kuhul:functional:v1">map</csymbol>
+        <apply><csymbol cd="urn:kuhul:daemon-alice:v1">TopicPatternExpand</csymbol></apply>
+        <ci>Q</ci>
+      </apply>
+    </annotation-xml>
+    <annotation encoding="text/plain">
+Phase: Yax (candidate expansion).
+Map(f_topic, Q) = [(domain_i, pattern_i, template_i)] for each AIML pattern
+that matches Q across the loaded corpus files.
+f_topic applies domain classification first (DOMAIN_ROUTE) to select the
+relevant corpus subset, then runs AIML_PATTERN_MATCH across that subset.
+Output type: list of (topic_domain, matched_pattern, expansion_template) triples.
+Pure transform — does not execute templates; builds the response candidate surface.
+Cardinality may be > 1 (multiple patterns match); order is by match specificity.
+    </annotation>
+  </semantics>
+
+  <mspace linebreak="newline"/>
+
+  <semantics>
+    <mrow>
+      <mi>Filter</mi>
+      <mo>(</mo><msub><mi>P</mi><mi>relevance</mi></msub><mo>,</mo><mi>candidates</mi><mo>)</mo>
+      <mo>=</mo>
+      <mo>[</mo><mi>c</mi><mo>|</mo>
+      <mi>c</mi><mo>.</mo><mi>match&#x5F;confidence</mi><mo>&#x2265;</mo><mi>&#x03B8;</mi>
+      <mo>&#x2227;</mo>
+      <mi>c</mi><mo>.</mo><mi>domain</mi><mo>&#x2208;</mo><mi>active&#x5F;domains</mi>
+      <mo>&#x2227;</mo>
+      <mo>&#x00AC;</mo><mi>KHANARY&#x5F;native&#x5F;overrides</mi><mo>(</mo><mi>c</mi><mo>)</mo>
+      <mo>]</mo>
+    </mrow>
+    <annotation-xml encoding="MathML-Content">
+      <apply>
+        <csymbol cd="urn:kuhul:functional:v1">filter</csymbol>
+        <apply><csymbol cd="urn:kuhul:daemon-alice:v1">RelevanceAdmission</csymbol></apply>
+        <ci>candidates</ci>
+      </apply>
+    </annotation-xml>
+    <annotation encoding="text/plain">
+Phase: Yax (Active Fold Graph query gate).
+Predicate P_relevance retains a candidate iff:
+  (a) match_confidence ≥ θ — the AIML pattern matched with sufficient specificity,
+  (b) domain ∈ active_domains — the topic domain is admitted for this query context,
+  (c) ¬KHANARY_native_overrides(c) — no KHANARY-native .aiml file already handles
+      this pattern at higher priority (khanary-distilled.aiml, kuhul-phases.aiml, etc.).
+Filter is stable; retained candidates preserve their specificity order.
+Filter cannot replace XCFE admission; it prunes before SCORE→RANK.
+    </annotation>
+  </semantics>
+
+  <mspace linebreak="newline"/>
+
+  <semantics>
+    <mrow>
+      <mi>Fold</mi>
+      <mo>(</mo><msub><mi>&#x2295;</mi><mi>topk</mi></msub><mo>,</mo>
+      <mo>[</mo><mo>]</mo><mo>,</mo><mi>filtered</mi><mo>)</mo>
+      <mo>=</mo><mi>candidate&#x5F;set</mi>
+      <mspace width="0.5em"/>
+      <mover><mo>&#x2192;</mo><mi>Sek</mi></mover>
+      <mspace width="0.5em"/>
+      <mi>topic&#x5F;response</mi>
+    </mrow>
+    <annotation-xml encoding="MathML-Content">
+      <apply>
+        <csymbol cd="urn:kuhul:functional:v1">fold</csymbol>
+        <apply><csymbol cd="urn:kuhul:daemon-alice:v1">TopKAccumulate</csymbol></apply>
+        <list/>
+        <ci>filtered</ci>
+      </apply>
+    </annotation-xml>
+    <annotation encoding="text/plain">
+Phase: Yax → Sek.
+Fold(⊕_topk, [], filtered) accumulates filtered candidates into candidate_set[1..k].
+Step ⊕_topk appends a candidate if it adds a distinct domain or higher specificity
+match; it does not deduplicate within the same domain.
+candidate_set feeds the SCORE→RANK pipeline (pattern_match_evidence).
+After SCORE and RANK, Sek executes the selected template via aiml_engine.cpp,
+expanding AIML tags (<srai>, <random>, <condition>, etc.) to produce topic_response.
+Empty-input result is [] → default.aiml fallback pattern.
+Associativity not assumed; step ⊕_topk is domain-distinct accumulation.
+    </annotation>
+  </semantics>
+
+  <mspace linebreak="newline"/>
+
+  <semantics>
+    <mrow>
+      <mi>SharedPatternKernelRef</mi><mo>=</mo>
+      <mtext>data/grammar/mml/v1/PatternKernelCalls.mml</mtext>
+    </mrow>
+    <annotation-xml encoding="MathML-Content">
+      <apply>
+        <csymbol cd="urn:kuhul:pattern-kernel-calls:v1">UsesSharedPatternKernel</csymbol>
+        <list><ci>MicronautPatterns</ci><ci>DaemonPatterns</ci><ci>SraiOperators</ci>
+          <ci>aiml-functions</ci><ci>map-filter-fold</ci><ci>CheeseCritic</ci></list>
+      </apply>
+    </annotation-xml>
+    <annotation encoding="text/plain">
+Uses shared typed pattern-call contract. Invokes only registered operations
+applicable to its role (topic Q&amp;A, AIML pattern match, corpus expansion).
+The shared reference does not grant capabilities or execution authority.
+    </annotation>
+  </semantics>
+
+  <annotation encoding="text/plain">
+daemon-alice contract invariants:
+1. ALICE is the topic-domain knowledge daemon; it is not a reasoning operator daemon (that is ELIZA-µ).
+2. ALICE operates at Yax for candidate expansion; Sek executes the matched pattern.
+3. KHANARY-native .aiml files take precedence in pattern resolution; corpus files handle the remainder.
+4. topic_response is a pattern-matched candidate, not a verified fact.
+5. ALICE does not dispatch reasoning operators (CAUSE/CONTRAST/etc.); those route to ELIZA-µ.
+6. ELIZA-µ and ALICE-µ may both appear in the same candidate set; W·C·R decides.
+7. Topology commits require the full Proposal -> Ch'en -> XCFE -> Xul path.
+  </annotation>
+</math>

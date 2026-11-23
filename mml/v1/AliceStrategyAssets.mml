@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<strategies schema="kuhul.strategy-catalog.v1" authority="projection_only">
+  <strategy id="kuhul-pi-replay-wcr" role="candidate-only-learning-fold" target_domain="kuhul.pi-cycle">
+    <thinking level="medium" target="kuhul.pi-cycle">
+      <fold phase="Pop" function="replay-prior-experience"/>
+      <fold phase="Wo" function="bind-evidence-and-vector-contracts"/>
+      <fold phase="Yax" function="relate-and-select-with-wcr"/>
+      <fold phase="Sek" function="apply-bounded-field-strategy"/>
+      <fold phase="Ch'en" function="host-verify-and-reward-only-verified-outcomes"/>
+      <fold phase="Xul" function="close-and-retain-candidate-trace"/>
+    </thinking>
+    <reasoning method="replay-wcr-verified-delta">
+      <evidence ref="replayed-experience-records"/>
+      <inference op="neighborhood.attention.v1: softmax(node_weight * cosine(W,C) / temperature); R=sum(attention*V)"/>
+      <counterexample ref="unverified-or-out-of-bound-field-update"/>
+      <verification rule="host-verifier-callback-required-for-reward"/>
+      <fold phase="Pop" function="record-replay-provenance"/>
+      <fold phase="Wo" function="bind-W-C-V-and-field-vectors"/>
+      <fold phase="Yax" function="relate-records-and-rank-residents"/>
+      <fold phase="Sek" function="propose-field-delta-limited-to-0.1"/>
+      <fold phase="Ch'en" function="verify-before-reward"/>
+      <fold phase="Xul" function="emit-candidate-only-trace"/>
+    </reasoning>
+    <source_authority factual_research="false" semantic_authority="false" execution_authority="false"/>
+  </strategy>
+  <strategy id="baseball-game-theory"
+            role="cross-domain-strategy-patterns"
+            analogy_domain="baseball"
+            target_domain="kuhul.wcr.multi-agent-decisions">
+    <pattern_bank path="vendor/key-grammar-kit/data/alice/baseball-game-theory.aiml"/>
+    <interpretation value="structural-analogy-for-fold-and-wcr-strategy"/>
+    <thinking level="medium" target="kuhul">
+      <focus ref="opponent-model"/>
+      <focus ref="decision-boundary"/>
+      <focus ref="commitment"/>
+      <fold phase="Pop" function="observe-relevant-context"/>
+      <fold phase="Wo" function="frame-goal-and-constraints"/>
+      <fold phase="Yax" function="expand-strategy-candidates"/>
+      <fold phase="Sek" function="compare-candidate-consequences"/>
+      <fold phase="Ch'en" function="challenge-with-counterexamples"/>
+      <fold phase="Xul" function="retain-decision-summary"/>
+    </thinking>
+    <reasoning method="wcr-strategy">
+      <evidence ref="observed-context"/>
+      <inference op="compare-candidates"/>
+      <counterexample ref="predictable-pure-strategy"/>
+      <verification rule="declared-evidence-only"/>
+      <fold phase="Pop" function="record-evidence"/>
+      <fold phase="Wo" function="bind-context-and-premises"/>
+      <fold phase="Yax" function="derive-candidate-relations"/>
+      <fold phase="Sek" function="evaluate-declared-operation"/>
+      <fold phase="Ch'en" function="verify-invariance-and-provenance"/>
+      <fold phase="Xul" function="emit-conclusion-and-provenance"/>
+    </reasoning>
+    <source_authority factual_research="false" semantic_authority="false" execution_authority="false"/>
+  </strategy>
+  <strategy id="game-theory-puzzle-jokes"
+            role="cross-domain-strategy-patterns"
+            analogy_domain="game-theory-and-puzzles"
+            target_domain="kuhul.fold.multi-agent-problem-solving">
+    <pattern_bank path="vendor/key-grammar-kit/data/alice/game-theory-puzzle-jokes.aiml"/>
+    <interpretation value="illustrative-strategy-patterns-not-research-claims"/>
+    <thinking level="medium" target="kuhul">
+      <focus ref="state-space"/>
+      <focus ref="alternatives"/>
+      <focus ref="outcomes"/>
+      <fold phase="Pop" function="observe-problem-state"/>
+      <fold phase="Wo" function="frame-goal-and-constraints"/>
+      <fold phase="Yax" function="expand-solution-strategies"/>
+      <fold phase="Sek" function="compare-solution-consequences"/>
+      <fold phase="Ch'en" function="challenge-with-counterexamples"/>
+      <fold phase="Xul" function="retain-solution-summary"/>
+    </thinking>
+    <reasoning method="folded-problem-solving">
+      <evidence ref="clues-rules-payoffs"/>
+      <inference op="traverse-and-select"/>
+      <counterexample ref="alternative-path-or-no-solution"/>
+      <verification rule="solution-record"/>
+      <fold phase="Pop" function="record-clues-rules-and-payoffs"/>
+      <fold phase="Wo" function="bind-state-and-premises"/>
+      <fold phase="Yax" function="traverse-candidate-paths"/>
+      <fold phase="Sek" function="evaluate-declared-operation"/>
+      <fold phase="Ch'en" function="verify-solution-record"/>
+      <fold phase="Xul" function="emit-result-and-provenance"/>
+    </reasoning>
+    <source_authority factual_research="false" semantic_authority="false" execution_authority="false"/>
+  </strategy>
+</strategies>

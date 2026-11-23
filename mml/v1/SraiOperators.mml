@@ -1,0 +1,254 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+  <!--
+    SraiOperators.mml
+    Declarative contract for the SRAI operator dispatch surface.
+
+    SRAI performs symbolic redirection through the AIML pattern matcher.
+    KHANARY extends this: "XCFE <OP> *" patterns are intercepted by
+    aiml_engine and routed to xcfe_executor.cpp as typed dispatch frames.
+    This document formalizes the operator set, phase assignments, input/output
+    roles, and the authority constraints on each operator.
+
+    Content dictionary: urn:kuhul:srai-operators:v1
+  -->
+
+  <!-- ── Operator dispatch chain ──────────────────────────────────────── -->
+  <semantics>
+    <mrow>
+      <mi>SraiChain</mi><mo>=</mo>
+      <mi>SCORE</mi><mo>&#x2192;</mo>
+      <mi>RANK</mi><mo>&#x2192;</mo>
+      <mi>COLLAPSE</mi><mo>&#x2192;</mo>
+      <mi>VERIFY</mi><mo>&#x2192;</mo>
+      <mi>TRAIN</mi><mo>&#x2192;</mo>
+      <mi>Xul</mi>
+    </mrow>
+    <annotation-xml encoding="MathML-Content">
+      <apply>
+        <csymbol cd="urn:kuhul:srai-operators:v1">OperatorChain</csymbol>
+        <list>
+          <ci>SCORE</ci><ci>RANK</ci><ci>COLLAPSE</ci>
+          <ci>VERIFY</ci><ci>TRAIN</ci><ci>Xul</ci>
+        </list>
+      </apply>
+    </annotation-xml>
+    <annotation encoding="text/plain">
+SRAI → SCORE → RANK → COLLAPSE → VERIFY → TRAIN → Xul commit.
+TRAIN must not run automatically after RANK. A verified_outcome from Ch'en
+is a hard prerequisite for any TRAIN dispatch. The chain is a directed pipeline;
+no operator can shortcut to Xul without traversing Ch'en verification.
+    </annotation>
+  </semantics>
+
+  <mspace linebreak="newline"/>
+
+  <!-- ── Operator binding frame ────────────────────────────────────────── -->
+  <semantics>
+    <mrow>
+      <mi>BindingFrame</mi><mo>=</mo>
+      <mo>&#x27E8;</mo><mi>operator</mi><mo>,</mo><mi>executor</mi><mo>,</mo>
+      <mi>phase</mi><mo>,</mo><mi>inputRoles</mi><mo>,</mo>
+      <mi>outputRole</mi><mo>,</mo><mi>effects</mi><mo>&#x27E9;</mo>
+    </mrow>
+    <annotation-xml encoding="MathML-Content">
+      <apply>
+        <csymbol cd="urn:kuhul:srai-operators:v1">BindingFrame</csymbol>
+        <list><ci>operator</ci><ci>executor</ci><ci>phase</ci>
+          <ci>inputRoles</ci><ci>outputRole</ci><ci>effects</ci></list>
+      </apply>
+    </annotation-xml>
+    <annotation encoding="text/plain">
+Each XCFE SRAI handler carries a typed binding frame encoding its operator name,
+C++ executor target, canonical authority phase, typed input roles, output role,
+and declared side-effect set. The frame is the machine contract; the AIML
+template text embeds it as [XCFE:OP ...] for aiml_engine interception.
+effects must be a subset of {read, measure, order, analyze, gate, project,
+emit, collapse, propose_delta}. Operators with effects containing "propose_delta"
+additionally require commit_requires fields.
+    </annotation>
+  </semantics>
+
+  <mspace linebreak="newline"/>
+
+  <!-- ── SCORE ─────────────────────────────────────────────────────────── -->
+  <semantics>
+    <mrow>
+      <mi>SCORE</mi><mo>(</mo><mi>C</mi><mo>,</mo><mi>Q</mi><mo>,</mo><mi>ctx</mi><mo>)</mo>
+      <mo>&#x2192;</mo><mi>scored_candidates</mi>
+    </mrow>
+    <annotation-xml encoding="MathML-Content">
+      <apply>
+        <csymbol cd="urn:kuhul:srai-operators:v1">ScoreOp</csymbol>
+        <ci>candidate_set</ci><ci>query_vector</ci><ci>context</ci>
+        <ci>scored_candidates</ci>
+      </apply>
+    </annotation-xml>
+    <annotation encoding="text/plain">
+SCORE evaluates W·C·R, vector similarity, and metric evidence for each candidate.
+Executor: metric (METRIC-µ). Phase: Sek. Effects: read, measure.
+Output scored_candidates carries per-candidate score_tau(Q,K | tau,r,F,theta,provider).
+SCORE does not select or admit; it populates the evidence field for RANK.
+    </annotation>
+  </semantics>
+
+  <mspace linebreak="newline"/>
+
+  <!-- ── RANK ──────────────────────────────────────────────────────────── -->
+  <semantics>
+    <mrow>
+      <mi>RANK</mi><mo>(</mo><mi>scored</mi><mo>,</mo><mi>ctx</mi><mo>)</mo>
+      <mo>&#x2192;</mo><mi>ranked_candidates</mi>
+    </mrow>
+    <annotation-xml encoding="MathML-Content">
+      <apply>
+        <csymbol cd="urn:kuhul:srai-operators:v1">RankOp</csymbol>
+        <ci>scored_candidates</ci><ci>context</ci><ci>ranked_candidates</ci>
+      </apply>
+    </annotation-xml>
+    <annotation encoding="text/plain">
+RANK orders the admitted scored_candidates set. Executor: metric. Phase: Sek.
+Effects: read, order. XCFE legality is a separate hard gate; a high rank score
+cannot promote an inadmissible candidate. RANK does not commit or authorize.
+    </annotation>
+  </semantics>
+
+  <mspace linebreak="newline"/>
+
+  <!-- ── COLLAPSE ───────────────────────────────────────────────────────── -->
+  <semantics>
+    <mrow>
+      <mi>COLLAPSE</mi><mo>(</mo><mi>ranked</mi><mo>,</mo><mi>critic</mi><mo>)</mo>
+      <mo>&#x2192;</mo><mi>collapsed_candidate</mi>
+    </mrow>
+    <annotation-xml encoding="MathML-Content">
+      <apply>
+        <csymbol cd="urn:kuhul:srai-operators:v1">CollapseOp</csymbol>
+        <ci>ranked_candidates</ci><ci>critic_reports</ci><ci>collapsed_candidate</ci>
+      </apply>
+    </annotation-xml>
+    <annotation encoding="text/plain">
+COLLAPSE performs total-order reduction via Jyggalag (T=0.00, Ch'en phase).
+The Greymarch output record names the surviving candidate; it is not a topology
+commit. Xul commit authority still requires the full Proposal → Ch'en → XCFE →
+Xul path. The Sheogorath/Jyggalag pair must appear as a unit; Sheogorath
+generates the high-entropy set that COLLAPSE reduces.
+    </annotation>
+  </semantics>
+
+  <mspace linebreak="newline"/>
+
+  <!-- ── VERIFY ────────────────────────────────────────────────────────── -->
+  <semantics>
+    <mrow>
+      <mi>VERIFY</mi><mo>(</mo><mi>candidate</mi><mo>,</mo><mi>evidence</mi><mo>)</mo>
+      <mo>&#x2192;</mo><mi>verified_outcome</mi>
+    </mrow>
+    <annotation-xml encoding="MathML-Content">
+      <apply>
+        <csymbol cd="urn:kuhul:srai-operators:v1">VerifyOp</csymbol>
+        <ci>candidate</ci><ci>evidence_refs</ci><ci>verified_outcome</ci>
+      </apply>
+    </annotation-xml>
+    <annotation encoding="text/plain">
+VERIFY is the Ch'en gate. Executor: ch_en_gate. Authority phase: Ch'en.
+verified_outcome is the only input that unlocks TRAIN. Without verified_outcome,
+TRAIN dispatch is blocked (XCFE TRAIN UNVERIFIED). VERIFY does not commit;
+it produces a gate token that TRAIN and Xul both require.
+    </annotation>
+  </semantics>
+
+  <mspace linebreak="newline"/>
+
+  <!-- ── TRAIN ─────────────────────────────────────────────────────────── -->
+  <semantics>
+    <mrow>
+      <mi>TRAIN</mi><mo>(</mo><mi>verified</mi><mo>,</mo><mi>feedback</mi><mo>)</mo>
+      <mo>&#x2192;</mo><mi>&#x0394;W</mi><mo>&#x2192;</mo><mi>Xul</mi>
+    </mrow>
+    <annotation-xml encoding="MathML-Content">
+      <apply>
+        <csymbol cd="urn:kuhul:srai-operators:v1">TrainOp</csymbol>
+        <ci>verified_outcome</ci><ci>verified_feedback</ci>
+        <ci>weight_delta</ci><ci>Xul</ci>
+      </apply>
+    </annotation-xml>
+    <annotation encoding="text/plain">
+TRAIN proposes W_learned delta from verified feedback. Executor: learning.
+Phase: Xul. Requires: verified_outcome (from VERIFY/Ch'en), Xul_authorization.
+W_effective = W_corpus * W_learned — only W_learned is updated. W_corpus is
+read-only corpus weight; it is never overwritten by a TRAIN delta.
+commit_requires: Ch'en_verification AND Xul_authorization. A daemon cannot
+recursively redirect itself into uncontrolled training.
+    </annotation>
+  </semantics>
+
+  <mspace linebreak="newline"/>
+
+  <!-- ── Remaining operators ───────────────────────────────────────────── -->
+  <semantics>
+    <mrow>
+      <mi>OpSet</mi><mo>=</mo>
+      <mo>{</mo>
+      <mi>COMPARE</mi><mo>,</mo><mi>RECALL</mi><mo>,</mo>
+      <mi>PROJECT</mi><mo>,</mo><mi>QUESTION</mi>
+      <mo>}</mo>
+    </mrow>
+    <annotation-xml encoding="MathML-Content">
+      <apply>
+        <csymbol cd="urn:kuhul:srai-operators:v1">SupportingOperators</csymbol>
+        <list><ci>COMPARE</ci><ci>RECALL</ci><ci>PROJECT</ci><ci>QUESTION</ci></list>
+      </apply>
+    </annotation-xml>
+    <annotation encoding="text/plain">
+COMPARE(a,b,evidence) → comparison_report. Executor: eliza. Phase: Ch'en. read,analyze.
+RECALL(query,phase,ctx) → gram_evidence. Executor: gram_store. Phase: Pop. read.
+PROJECT(substrate,ctx,traj_id) → result_substrate. Executor: vector_mu. Phase: Yax. read,project. No mutation.
+QUESTION(intent_gap,ctx,history) → question_record. Executor: question_selector. Phase: Yax. read,emit.
+All four feed scored_candidates or evidence_refs into the SCORE→RANK pipeline.
+None can commit topology; none bypass the Ch'en→Xul authority path.
+    </annotation>
+  </semantics>
+
+  <mspace linebreak="newline"/>
+
+  <!-- ── W_effective invariant ─────────────────────────────────────────── -->
+  <semantics>
+    <mrow>
+      <msub><mi>W</mi><mi>effective</mi></msub>
+      <mo>=</mo>
+      <msub><mi>W</mi><mi>corpus</mi></msub>
+      <mo>&#x22C5;</mo>
+      <msub><mi>W</mi><mi>learned</mi></msub>
+    </mrow>
+    <annotation-xml encoding="MathML-Content">
+      <apply>
+        <eq/>
+        <apply><csymbol cd="urn:kuhul:srai-operators:v1">EffectiveWeight</csymbol></apply>
+        <apply>
+          <times/>
+          <apply><csymbol cd="urn:kuhul:srai-operators:v1">CorpusWeight</csymbol></apply>
+          <apply><csymbol cd="urn:kuhul:srai-operators:v1">LearnedWeight</csymbol></apply>
+        </apply>
+      </apply>
+    </annotation-xml>
+    <annotation encoding="text/plain">
+W_effective = W_corpus * W_learned.
+W_corpus: read-only gram/corpus weight from GramStore; set by the scraper pipeline.
+W_learned: mutable weight updated by TRAIN after Ch'en+Xul authorization.
+TRAIN targets only W_learned. W_corpus is never overwritten by a learning delta.
+This preserves the corpus as a stable baseline while allowing incremental learning.
+    </annotation>
+  </semantics>
+
+  <annotation encoding="text/plain">
+SraiOperators contract invariants:
+1. SRAI redirects text through the pattern matcher; XCFE dispatch requires the [XCFE:OP] binding frame.
+2. Every operator declares phase, executor, input roles, output role, and effects before dispatch.
+3. TRAIN requires verified_outcome from Ch'en; raw RANK output alone does not authorize learning.
+4. W_effective = W_corpus * W_learned; W_corpus is read-only; TRAIN updates only W_learned.
+5. COLLAPSE produces a Greymarch record; it is not a topology commit.
+6. No operator can shortcut to Xul without traversing the Ch'en verification gate.
+7. This document describes operator contracts; aiml_engine.cpp + xcfe_executor.cpp supply the implementation.
+  </annotation>
+</math>

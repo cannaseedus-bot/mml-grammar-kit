@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+  <!--
+    map-filter-fold.mml
+    Restricted Content MathML contract for typed collection transforms.
+
+    This collection fold is distinct from the six-phase K'UHUL fold. The
+    operators are declarative here; runtime lowering and XCFE admission are
+    required before any execution.
+  -->
+
+  <semantics>
+    <mrow>
+      <mi>Pipeline</mi><mo>=</mo>
+      <mi>Fold</mi><mo>(</mo><mi>oplus</mi><mo>,</mo><mi>seed</mi><mo>,</mo>
+      <mi>Filter</mi><mo>(</mo><mi>P</mi><mo>,</mo>
+      <mi>Map</mi><mo>(</mo><mi>f</mi><mo>,</mo><mi>X</mi><mo>)</mo><mo>)</mo><mo>)</mo>
+    </mrow>
+    <annotation-xml encoding="MathML-Content">
+      <apply>
+        <csymbol cd="urn:kuhul:functional:v1">fold</csymbol>
+        <ci>oplus</ci><ci>seed</ci>
+        <apply>
+          <csymbol cd="urn:kuhul:functional:v1">filter</csymbol>
+          <ci>P</ci>
+          <apply><csymbol cd="urn:kuhul:functional:v1">map</csymbol><ci>f</ci><ci>X</ci></apply>
+        </apply>
+      </apply>
+    </annotation-xml>
+    <annotation encoding="text/plain">
+For input collection X, map applies pure transform f to each element, filter
+retains elements satisfying predicate P, and fold accumulates the resulting
+ordered sequence using seed and binary step oplus. Types and traversal order
+must be declared by the consuming program contract.
+    </annotation>
+  </semantics>
+
+  <mspace linebreak="newline"/>
+
+  <semantics>
+    <mrow>
+      <mi>Map</mi><mo>(</mo><mi>f</mi><mo>,</mo><mi>X</mi><mo>)</mo>
+      <mo>=</mo><mo>[</mo><mi>f</mi><mo>(</mo><msub><mi>x</mi><mn>i</mn></msub><mo>)</mo>
+      <mo>]</mo><msub><mrow/><mi>i</mi></msub>
+    </mrow>
+    <annotation-xml encoding="MathML-Content">
+      <apply><csymbol cd="urn:kuhul:functional:v1">map</csymbol><ci>f</ci><ci>X</ci></apply>
+    </annotation-xml>
+    <annotation encoding="text/plain">
+Map preserves input cardinality and item order. In KHANARY it may project
+typed gram or graph candidates into vector/metric records. A transform must
+declare its input and output types and effects.
+    </annotation>
+  </semantics>
+
+  <mspace linebreak="newline"/>
+
+  <semantics>
+    <mrow>
+      <mi>Filter</mi><mo>(</mo><mi>P</mi><mo>,</mo><mi>X</mi><mo>)</mo>
+      <mo>=</mo><mo>[</mo><msub><mi>x</mi><mi>i</mi></msub>
+      <mo>|</mo><msub><mi>x</mi><mi>i</mi></msub><mo>&#x2208;</mo><mi>X</mi>
+      <mo>&#x2227;</mo><mi>P</mi><mo>(</mo><msub><mi>x</mi><mi>i</mi></msub><mo>)</mo><mo>]</mo>
+    </mrow>
+    <annotation-xml encoding="MathML-Content">
+      <apply><csymbol cd="urn:kuhul:functional:v1">filter</csymbol><ci>P</ci><ci>X</ci></apply>
+    </annotation-xml>
+    <annotation encoding="text/plain">
+Filter is stable: retained elements preserve their input order. It can remove
+invalid bindings or candidates that fail a declared predicate. A filter may
+consume an XCFE admission result, but cannot replace or mint XCFE authority.
+    </annotation>
+  </semantics>
+
+  <mspace linebreak="newline"/>
+
+  <semantics>
+    <mrow>
+      <mi>Fold</mi><mo>(</mo><mi>&#x2295;</mi><mo>,</mo><mi>a0</mi><mo>,</mo><mi>X</mi><mo>)</mo>
+      <mo>=</mo><msub><mi>a</mi><mi>n</mi></msub>
+      <mspace width="1em"/><msub><mi>a</mi><mi>i</mi></msub>
+      <mo>=</mo><mi>&#x2295;</mi><mo>(</mo><msub><mi>a</mi><mrow><mi>i</mi><mo>-</mo><mn>1</mn></mrow></msub>
+      <mo>,</mo><msub><mi>x</mi><mi>i</mi></msub><mo>)</mo>
+    </mrow>
+    <annotation-xml encoding="MathML-Content">
+      <apply><csymbol cd="urn:kuhul:functional:v1">fold</csymbol>
+        <ci>oplus</ci><ci>a0</ci><ci>X</ci>
+      </apply>
+    </annotation-xml>
+    <annotation encoding="text/plain">
+Fold reduces an ordered collection from an explicit initial accumulator.
+Associativity, identity, parallelization, and empty-input behavior must be
+declared by the selected step contract; the runtime must not assume them.
+    </annotation>
+  </semantics>
+
+  <mspace linebreak="newline"/>
+
+  <semantics>
+    <mrow>
+      <mi>TypedExecution</mi><mo>=</mo>
+      <mi>ParseMathML</mi><mo>&#x2192;</mo><mi>LowerToKAST</mi><mo>&#x2192;</mo>
+      <mi>CheckTypesAndEffects</mi><mo>&#x2192;</mo><mi>XCFEAdmission</mi><mo>&#x2192;</mo>
+      <mi>ExecuteInPhase</mi>
+    </mrow>
+    <annotation-xml encoding="MathML-Content">
+      <apply><csymbol cd="urn:kuhul:functional:v1">ExecutionBoundary</csymbol>
+        <list><ci>ParseMathML</ci><ci>LowerToKAST</ci><ci>CheckTypesAndEffects</ci>
+          <ci>XCFEAdmission</ci><ci>ExecuteInPhase</ci></list>
+      </apply>
+    </annotation-xml>
+    <annotation encoding="text/plain">
+Content MathML is a machine-readable expression surface, not an execution
+engine. Lowering must preserve types and effects. XCFE and host authorization
+remain authoritative. Functional Fold reduces a collection; K'UHUL fold
+denotes the Pop, Wo, Yax, Sek, Ch'en, Xul lifecycle.
+    </annotation>
+  </semantics>
+
+  <annotation encoding="text/plain">
+MapFilterFold contract invariants:
+1. Map transforms typed values and is pure unless an explicit effect contract says otherwise.
+2. Filter preserves input order and cannot substitute for XCFE admission.
+3. Fold requires an explicit initial accumulator, step, and traversal order.
+4. No algebraic or parallel-execution properties are assumed without declaration.
+5. Parsing MathML does not itself grant execution or persistent-write authority.
+  </annotation>
+</math>

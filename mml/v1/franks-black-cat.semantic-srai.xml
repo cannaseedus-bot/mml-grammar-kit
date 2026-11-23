@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pop>
+  <wo key="⟁FRANKS-BLACK-CAT">
+    <vector relation="identity" pattern="WHAT IS *" />
+    <vector relation="entity_owner" pattern="WHO IS *" />
+    <vector relation="state" pattern="HOW IS *" />
+    <vector relation="location" pattern="WHERE IS *" />
+    <vector relation="temporal" pattern="WHEN IS *" />
+  </wo>
+  <yax />
+  <sek capability="micronaut.define">
+    <srai target="⟁FRANKS-BLACK-CAT" resolve="relation" bind="*" />
+  </sek>
+  <chen />
+  <xul />
+</pop>

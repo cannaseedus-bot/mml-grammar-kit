@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+  <!-- GML is canonical topology; this MML defines a projection-only tensor contract. -->
+  <title>Micronaut FieldGraph projection</title>
+  <semantics>
+    <mrow><mi>FieldGraph</mi><mo>=</mo><mi>GMLTopology</mi><mo>+</mo><mi>HostResidentBinding</mi></mrow>
+    <annotation-xml encoding="MathML-Content"><apply>
+      <csymbol cd="urn:kuhul:micronaut-fieldgraph:v1">BindResidents</csymbol>
+      <ci>micronaut_fieldgraph.gml</ci><ci>host_micronaut_registry</ci><ci>state_tensors</ci>
+    </apply></annotation-xml>
+    <annotation encoding="text/plain">GML owns seven fold nodes and eight directed edges. At projection time the host binds residents by fold selector and registry row order. Unknown or null folds bind to System. GML does not enumerate runtime residents or grant authority.</annotation>
+  </semantics>
+  <mspace linebreak="newline"/>
+  <semantics>
+    <mrow><mi>w</mi><mo>=</mo><mtext>[1,1,2,3,5,8,1]</mtext></mrow>
+    <annotation-xml encoding="MathML-Content"><apply>
+      <csymbol cd="urn:kuhul:micronaut-fieldgraph:v1">FoldNodeWeights</csymbol>
+      <ci>Pop,Wo,Yax,Sek,Ch'en,Xul,System</ci><ci>1,1,2,3,5,8,1</ci>
+    </apply></annotation-xml>
+    <annotation encoding="text/plain">Node order: Pop, Wo, Yax, Sek, Ch'en, Xul, System. System is outside the six-phase cycle; its declared outgoing edge is System→Pop.</annotation>
+  </semantics>
+  <mspace linebreak="newline"/>
+  <semantics>
+    <mrow><mi>gravity_i</mi><mo>=</mo><mi>confidence_i</mi><mo>×</mo><mi>node_weight_i</mi></mrow>
+    <annotation-xml encoding="MathML-Content"><apply>
+      <csymbol cd="urn:kuhul:micronaut-fieldgraph:v1">ResidentGravity</csymbol>
+      <ci>confidence_i</ci><ci>node_weight_i</ci>
+    </apply></annotation-xml>
+    <annotation encoding="text/plain">Gravity ranks residents and is stored separately; it is not another multiplier in the W-C-R attention score.</annotation>
+  </semantics>
+  <mspace linebreak="newline"/>
+  <semantics>
+    <mrow><mi>WCRAttention</mi><mo>(</mo><mi>W_n,C_i,V_i,w_n,d</mi><mo>)</mo></mrow>
+    <annotation-xml encoding="MathML-Content"><apply>
+      <csymbol cd="urn:kuhul:micronaut-fieldgraph:v1">WCRAttention</csymbol>
+      <ci>W_n</ci><ci>C_i</ci><ci>V_i</ci><ci>w_n</ci><ci>d</ci>
+    </apply></annotation-xml>
+    <annotation encoding="text/plain">node_features[n]=mean(state_i for residents in n), or zero for an empty node. score_i=softmax(w_n*dot(W_n,C_i)/sqrt(d)); R_n=sum_i(score_i*V_i). W_n is node_features[n] at cold start and predecessor residual on the six-phase pass. C_i is resident state; V_i is the resident state value; d=5. Sek uses Yax as its primary predecessor; the Wo→Sek shortcut remains separately declared. System is entry-only, starts from its own cold-start input, and has no implicit Xul→System edge.</annotation>
+  </semantics>
+  <mspace linebreak="newline"/>
+  <semantics>
+    <mrow><mi>node_features</mi><mo>:</mo><mtext>[7,5]</mtext><mi>adj</mi><mo>:</mo><mtext>[7,7]</mtext></mrow>
+    <annotation-xml encoding="MathML-Content"><apply>
+      <csymbol cd="urn:kuhul:micronaut-fieldgraph:v1">TensorProjectionSchema</csymbol>
+      <ci>node_ids</ci><ci>node_features</ci><ci>node_weights</ci><ci>adj</ci>
+      <ci>gravity</ci><ci>W</ci><ci>R</ci><ci>wcr_scores</ci><ci>names</ci>
+      <ci>fold_names</ci><ci>state_cols</ci><ci>node_residents</ci>
+    </apply></annotation-xml>
+    <annotation encoding="text/plain">Derived fields: node_ids[N] int32; node_features[7,5], node_weights[7], adj[7,7], gravity[N], W[7,5], R[7,5] float32; wcr_scores; names; fold_names; state_cols; node_residents. Columns: confidence, temperature, repeat_penalty, quant_tier_id, category_id. The state-tensor producer defines numeric encodings and registry order.</annotation>
+  </semantics>
+  <annotation encoding="text/plain">Lifecycle: Pop reads GML and registry; Wo binds state rows; Yax computes attention and gravity; Sek projects W-C-R over declared edges; Ch'en checks dimensions, finite values, resident coverage, references and hashes; Xul emits the selected host-native GML/MML projection. GML remains the canonical topology and MML the projection contract; no PyTorch .pt artifact is part of this format.</annotation>
+</math>

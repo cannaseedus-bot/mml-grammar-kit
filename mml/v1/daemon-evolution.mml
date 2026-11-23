@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+
+  <!--
+    daemon-evolution.mml
+
+    EVOLUTION-µ contract:
+      Discover high-entropy pattern in phase Yax, producing micronaut definitions.
+      Do not alter WCR or track without explicit permission.
+
+    Content dictionary used here: urn:kuhul:daemon-evolution:v1
+  -->
+
+  <!-- ── Identity ──────────────────────────────────────────────────────────── -->
+  <semantics>
+    <mrow>
+      <mi>evolution</mi>
+      <mo>_</mo>
+      <mi>&#x03BC;</mi>
+      <mo>=</mo>
+      <mo>&#x27E8;</mo>
+      <mi>phase</mi><mo>,</mo>
+      <mi>T</mi><mo>,</mo>
+      <mi>role</mi>
+      <mo>&#x27E9;</mo>
+    </mrow>
+    <annotation-xml encoding="MathML-Content">
+      <apply>
+        <eq/>
+        <apply><csymbol cd="urn:kuhul:daemon-evolution:v1">Identity</csymbol><ci>evolution</ci></apply>
+        <list>
+          <cn>Yax</cn>
+          <cn>1.0</cn>
+          <ci>role</ci>
+        </list>
+      </apply>
+    </annotation-xml>
+    <annotation encoding="text/plain">
+evolution_mu = &lt;phase=Yax, T=1.0, role&gt;
+Role: High-entropy pattern discovery; produces candidate micronaut definitions
+Phase angle: theta = 2&#x03C0;/3
+    </annotation>
+  </semantics>
+
+  <mspace linebreak="newline" indentalign="center"/>
+
+  <!-- ── Capability ────────────────────────────────────────────────────────── -->
+  <semantics>
+    <mrow>
+      <mi>Cap</mi>
+      <mo>(</mo><mi>evolution</mi><mo>)</mo>
+      <mo>=</mo>
+      <mi>GRANTED</mi>
+    </mrow>
+    <annotation-xml encoding="MathML-Content">
+      <apply>
+        <csymbol cd="urn:kuhul:daemon-evolution:v1">Capability</csymbol>
+        <ci>evolution</ci>
+        <ci>granted</ci>
+      </apply>
+    </annotation-xml>
+    <annotation encoding="text/plain">
+CAN: Discover high-entropy pattern in phase Yax, producing micronaut definitions.
+SUPPLIES: Provide candidate micronaut definitions to XCFE.
+    </annotation>
+  </semantics>
+
+  <mspace linebreak="newline" indentalign="center"/>
+
+  <!-- ── Authority boundary ────────────────────────────────────────────────── -->
+  <semantics>
+    <mrow>
+      <mi>&#x0394;B</mi>
+      <mo>&#x2209;</mo>
+      <mi>Auth</mi>
+      <mo>(</mo><mi>evolution</mi><mo>)</mo>
+    </mrow>
+    <annotation-xml encoding="MathML-Content">
+      <apply>
+        <csymbol cd="urn:kuhul:daemon-evolution:v1">AuthorityBoundary</csymbol>
+        <apply><notin/><ci>DeltaTopology</ci><ci>Auth_evolution</ci></apply>
+      </apply>
+    </annotation-xml>
+    <annotation encoding="text/plain">
+CANNOT: Do not alter WCR or track without explicit permission.
+BOUNDARY: Cannot access Xul or Ch'en verdicts.
+Delta_B not-in Auth(evolution): topology commits require Proposal -&gt; Ch'en -&gt; XCFE -&gt; Xul.
+    </annotation>
+  </semantics>
+
+  <mspace linebreak="newline" indentalign="center"/>
+
+  <!-- ── WCR scoring position ───────────────────────────────────────────────── -->
+  <semantics>
+    <mrow>
+      <mi>S</mi>
+      <mo>=</mo>
+      <msub><mi>W</mi><mi>&#x03BC;</mi></msub>
+      <mo>&#x22C5;</mo>
+      <msub><mi>C</mi><mi>&#x03BC;</mi></msub>
+      <mo>&#x22C5;</mo>
+      <msub><mi>R</mi><mi>&#x03BC;</mi></msub>
+      <mo>(</mo><mi>Q</mi><mo>)</mo>
+    </mrow>
+    <annotation-xml encoding="MathML-Content">
+      <apply>
+        <eq/>
+        <ci>S</ci>
+        <apply>
+          <times/>
+          <apply><selector/><ci>W</ci><ci>mu</ci></apply>
+          <apply><selector/><ci>C</ci><ci>mu</ci></apply>
+          <apply>
+            <csymbol cd="urn:kuhul:daemon-evolution:v1">Relevance</csymbol>
+            <ci>Q</ci>
+          </apply>
+        </apply>
+      </apply>
+    </annotation-xml>
+    <annotation encoding="text/plain">
+S = W_mu * C_mu * R_mu(Q)
+W_mu: static weight for evolution in its capability family.
+C_mu: confidence earned through Ch'en-verified outcomes.
+R_mu(Q): query-relevance score at phase Yax (T=1.0).
+Eligibility: evolution is admitted to the candidate set only when requires(op) subset-of capabilities(evolution).
+    </annotation>
+  </semantics>
+
+  <semantics>
+    <mrow>
+      <mi>SharedPatternKernelRef</mi><mo>=</mo>
+      <mtext>data/grammar/PatternKernelCalls.mml</mtext>
+    </mrow>
+    <annotation-xml encoding="MathML-Content">
+      <apply>
+        <csymbol cd="urn:kuhul:pattern-kernel-calls:v1">UsesSharedPatternKernel</csymbol>
+        <list><ci>MicronautPatterns</ci><ci>DaemonPatterns</ci><ci>SraiOperators</ci>
+          <ci>aiml-functions</ci><ci>map-filter-fold</ci><ci>CheeseCritic</ci></list>
+      </apply>
+    </annotation-xml>
+    <annotation encoding="text/plain">
+This daemon/Micronaut uses the shared typed pattern-call contract. It invokes
+only registered operations applicable to its role, phase, context, and scope;
+the shared reference does not grant capabilities or execution authority.
+    </annotation>
+  </semantics>
+
+</math>

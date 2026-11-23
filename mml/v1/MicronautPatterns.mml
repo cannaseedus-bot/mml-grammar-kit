@@ -1,0 +1,295 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+  <!--
+    MicronautPatterns.mml
+    Declarative contract for reusable pattern recognition across Micronauts.
+
+    This document defines data and authority boundaries. It does not register
+    a runtime kernel, grant capabilities, or make a pattern match executable.
+  -->
+
+  <semantics>
+    <mrow>
+      <mi>Pattern</mi><mo>=</mo>
+      <mo>&#x27E8;</mo><mi>id</mi><mo>,</mo><mi>version</mi><mo>,</mo>
+      <mi>matcher</mi><mo>,</mo><mi>captures</mi><mo>,</mo>
+      <mi>scope</mi><mo>,</mo><mi>provenance</mi><mo>&#x27E9;</mo>
+    </mrow>
+    <annotation-xml encoding="MathML-Content">
+      <apply>
+        <csymbol cd="urn:kuhul:micronaut-patterns:v1">PatternRecord</csymbol>
+        <list><ci>id</ci><ci>version</ci><ci>matcher</ci><ci>captures</ci><ci>scope</ci><ci>provenance</ci></list>
+      </apply>
+    </annotation-xml>
+    <annotation encoding="text/plain">
+Pattern is the admitted record shape, not a proposal shape. Its id and version
+are stable within the pattern registry. scope binds it to a named Micronaut
+identity, field, canonical phase, and invocation context. provenance identifies
+the authoring source and evidence chain. A µ<hex> runtime handle, a µ:// program
+key, and a named identity such as CODEGEN-PY-µ are distinct address types.
+    </annotation>
+  </semantics>
+
+  <mspace linebreak="newline"/>
+
+  <semantics>
+    <mrow>
+      <mi>MatchEvidence</mi><mo>=</mo><mo>&#x27E8;</mo><mi>patternId</mi><mo>,</mo>
+      <mi>inputRef</mi><mo>,</mo><mi>matcherKind</mi><mo>,</mo>
+      <mi>span</mi><mo>,</mo><mi>normalization</mi><mo>,</mo><mi>provenance</mi><mo>&#x27E9;</mo>
+      <mspace width="1em"/>
+      <mi>MatchStatus</mi><mo>&#x2208;</mo><mo>{</mo><mi>matched</mi><mo>,</mo>
+      <mi>miss</mi><mo>,</mo><mi>defer</mi><mo>}</mo>
+    </mrow>
+    <annotation-xml encoding="MathML-Content">
+      <apply>
+        <csymbol cd="urn:kuhul:micronaut-patterns:v1">MatchEvidenceRecord</csymbol>
+        <list><ci>patternId</ci><ci>inputRef</ci><ci>matcherKind</ci><ci>span</ci><ci>normalization</ci><ci>provenance</ci></list>
+        <list><ci>matched</ci><ci>miss</ci><ci>defer</ci></list>
+      </apply>
+    </annotation-xml>
+    <annotation encoding="text/plain">
+Matcher evidence records where and how a pattern matched the input. A match is
+recognition evidence only; it is not semantic truth, an execution plan, or an
+XCFE verdict.
+    </annotation>
+  </semantics>
+
+  <mspace linebreak="newline"/>
+
+  <semantics>
+    <mrow>
+      <mi>Capture</mi><mo>=</mo><mo>&#x27E8;</mo><mi>slot</mi><mo>,</mo>
+      <mi>name</mi><mo>,</mo><mi>type</mi><mo>,</mo><mi>value</mi><mo>,</mo>
+      <mi>sourceRef</mi><mo>&#x27E9;</mo>
+      <mspace width="1em"/>
+      <mi>Binding</mi><mo>=</mo><mo>&#x27E8;</mo><mi>name</mi><mo>,</mo>
+      <mi>type</mi><mo>,</mo><mi>scope</mi><mo>,</mo><mi>value</mi><mo>,</mo>
+      <mi>sourceRef</mi><mo>&#x27E9;</mo>
+    </mrow>
+    <annotation-xml encoding="MathML-Content">
+      <apply>
+        <csymbol cd="urn:kuhul:micronaut-patterns:v1">CaptureBindingTypes</csymbol>
+        <list><ci>slot</ci><ci>name</ci><ci>type</ci><ci>value</ci><ci>sourceRef</ci></list>
+        <list><ci>name</ci><ci>type</ci><ci>scope</ci><ci>value</ci><ci>sourceRef</ci></list>
+      </apply>
+    </annotation-xml>
+    <annotation encoding="text/plain">
+A Capture is the typed value observed at a matcher slot. Bind maps that capture
+into a declared scope and produces a Binding; they are related records, not
+synonyms. Every binding preserves the capture type and sourceRef. An unresolved
+or incompatible capture yields defer/reject and cannot invent a value.
+    </annotation>
+  </semantics>
+
+  <mspace linebreak="newline"/>
+
+  <semantics>
+    <mrow>
+      <mi>Match</mi><mo>(</mo><mi>P</mi><mo>,</mo><mi>x</mi><mo>,</mo><mi>c</mi><mo>)</mo>
+      <mo>&#x2192;</mo>
+      <mo>&#x27E8;</mo><mi>bindings</mi><mo>,</mo><mi>evidence</mi><mo>,</mo><mi>status</mi><mo>&#x27E9;</mo>
+    </mrow>
+    <annotation-xml encoding="MathML-Content">
+      <apply>
+        <csymbol cd="urn:kuhul:micronaut-patterns:v1">Recognize</csymbol>
+        <ci>P</ci><ci>x</ci><ci>c</ci>
+        <list><ci>captures</ci><ci>evidence</ci><ci>status</ci></list>
+      </apply>
+    </annotation-xml>
+    <annotation encoding="text/plain">
+Match is the matcher stage only: it consumes a registered Pattern P, input x,
+and context c, and returns typed Captures, MatchEvidence, and status. It does
+not perform Bind, Compose, emit a candidate, assert a claim is true, select a
+plan, or authorize execution. Miss and unresolved slots are explicit statuses.
+    </annotation>
+  </semantics>
+
+  <mspace linebreak="newline"/>
+
+  <semantics>
+    <mrow>
+      <mi>PatternStages</mi><mo>=</mo>
+      <mi>register</mi><mo>&#x2192;</mo><mi>normalize</mi><mo>&#x2192;</mo>
+      <mi>match</mi><mo>&#x2192;</mo><mi>bind</mi><mo>&#x2192;</mo>
+      <mi>compose</mi><mo>&#x2192;</mo><mi>emitCandidate</mi>
+    </mrow>
+    <annotation-xml encoding="MathML-Content">
+      <apply>
+        <csymbol cd="urn:kuhul:micronaut-patterns:v1">PatternPipeline</csymbol>
+        <list>
+          <ci>register</ci><ci>normalize</ci><ci>match</ci>
+          <ci>bind</ci><ci>compose</ci><ci>emitCandidate</ci>
+        </list>
+      </apply>
+    </annotation-xml>
+    <annotation encoding="text/plain">
+The stages are distinct. PatternKernel(P) registers a validated pattern;
+Normalize(x,c) prepares the input under context c; Match(P,x,c) performs only
+recognition; Bind maps typed captures into declared scope; Compose applies the
+declared pure transforms; EmitCandidate produces a proposal-only candidate.
+Matchers may be literal, wildcard, typed-slot, n-gram, or relational.
+Composition may map, filter, fold, or rewrite pattern data but cannot grant
+execution authority. Every exported binding retains type, scope, and sourceRef.
+    </annotation>
+  </semantics>
+
+  <semantics>
+    <mrow>
+      <mi>PatternPipeline</mi><mo>(</mo><mi>P</mi><mo>,</mo><mi>x</mi><mo>,</mo><mi>c</mi><mo>)</mo>
+      <mo>=</mo><mi>EmitCandidate</mi><mo>(</mo><mi>Compose</mi><mo>(</mo>
+      <mi>Bind</mi><mo>(</mo><mi>Match</mi><mo>(</mo><mi>P</mi><mo>,</mo>
+      <mi>Normalize</mi><mo>(</mo><mi>x</mi><mo>,</mo><mi>c</mi><mo>)</mo><mo>,</mo><mi>c</mi><mo>)</mo>
+      <mo>,</mo><mi>c</mi><mo>)</mo><mo>)</mo>
+    </mrow>
+    <annotation-xml encoding="MathML-Content">
+      <apply>
+        <csymbol cd="urn:kuhul:micronaut-patterns:v1">PatternPipelineComposition</csymbol>
+        <ci>P</ci><ci>x</ci><ci>c</ci>
+        <list><ci>register</ci><ci>normalize</ci><ci>match</ci><ci>bind</ci><ci>compose</ci><ci>emitCandidate</ci></list>
+      </apply>
+    </annotation-xml>
+    <annotation encoding="text/plain">
+register(P) precedes this invocation pipeline. Match(P,x,c) is only the match
+stage; the whole PatternPipeline additionally normalizes, binds, composes, and
+emits a candidate. Registration and candidate emission do not admit a pattern
+or authorize an operation.
+    </annotation>
+  </semantics>
+
+  <mspace linebreak="newline"/>
+
+  <semantics>
+    <mrow>
+      <mi>G</mi><mo>=</mo><mo>{</mo><mi>unigram</mi><mo>,</mo><mi>bigram</mi><mo>,</mo>
+      <mi>trigram</mi><mo>,</mo><mi>quadgram</mi><mo>,</mo><mi>supagram</mi><mo>}</mo>
+      <mo>&#x2192;</mo><mi>candidateEvidence</mi>
+    </mrow>
+    <annotation-xml encoding="MathML-Content">
+      <apply>
+        <csymbol cd="urn:kuhul:micronaut-patterns:v1">GramEvidence</csymbol>
+        <list><ci>unigram</ci><ci>bigram</ci><ci>trigram</ci><ci>quadgram</ci><ci>supagram</ci></list>
+        <ci>candidateEvidence</ci>
+      </apply>
+    </annotation-xml>
+    <annotation encoding="text/plain">
+Gram order describes sequence length and retrieval structure, not execution
+authority. Corpus observations remain evidence. A framework is callable only
+when a registered grammar/program contract validates and XCFE admits it.
+    </annotation>
+  </semantics>
+
+  <mspace linebreak="newline"/>
+
+  <semantics>
+    <mrow>
+      <mi>Legal</mi><mo>(</mo><mi>a</mi><mo>)</mo><mo>&#x2208;</mo><mo>{</mo><mn>0</mn><mo>,</mo><mn>1</mn><mo>}</mo>
+      <mspace width="1em"/>
+      <mi>Utility</mi><mo>(</mo><mi>a</mi><mo>)</mo><mo>&#x2208;</mo><mi>&#x211D;</mi>
+    </mrow>
+    <annotation-xml encoding="MathML-Content">
+      <apply>
+        <csymbol cd="urn:kuhul:micronaut-patterns:v1">LegalityUtilitySeparation</csymbol>
+        <ci>Legal</ci><ci>Utility</ci>
+      </apply>
+    </annotation-xml>
+    <annotation encoding="text/plain">
+Candidate ranking may use relevance, corpus weight, learned preference,
+attention, or critic evidence. XCFE legality is a separate hard gate and
+cannot be outweighed by a high pattern score.
+    </annotation>
+  </semantics>
+
+  <mspace linebreak="newline"/>
+
+  <semantics>
+    <mrow>
+      <mi>Induce</mi><mo>(</mo><mi>context</mi><mo>,</mo><mi>observations</mi><mo>)</mo>
+      <mo>&#x2192;</mo><mo>&#x27E8;</mo><mi>PatternProposal</mi><mo>,</mo><mi>structuralDelta</mi><mo>,</mo><mi>lineage</mi><mo>&#x27E9;</mo>
+      <mo>&#x2192;</mo><mi>validate</mi><mo>&#x2192;</mo><mi>admit</mi>
+    </mrow>
+    <annotation-xml encoding="MathML-Content">
+      <apply>
+        <csymbol cd="urn:kuhul:micronaut-patterns:v1">InductionProposal</csymbol>
+        <ci>context</ci><ci>observations</ci>
+        <list><ci>PatternProposal</ci><ci>structuralDelta</ci><ci>lineage</ci></list>
+      </apply>
+    </annotation-xml>
+    <annotation encoding="text/plain">
+Pattern induction may discover, generalize, specialize, or counterexample-test
+a pattern in a new context. Equivalent candidates reuse an existing pattern;
+a material, evidence-backed difference produces a versioned child proposal
+with structural delta and parent lineage. Verification and authorized Xul
+admission govern promotion; the pattern engine does not write learned state.
+    </annotation>
+  </semantics>
+
+  <mspace linebreak="newline"/>
+
+  <semantics>
+    <mrow>
+      <mi>CorpusBinding</mi><mo>=</mo>
+      <mo>&#x27E8;</mo><mi>domain</mi><mo>,</mo><mi>keyPrefix</mi><mo>,</mo>
+      <mi>corpusPath</mi><mo>,</mo><mi>micronaut</mi><mo>,</mo><mi>entryCount</mi><mo>&#x27E9;</mo>
+    </mrow>
+    <annotation-xml encoding="MathML-Content">
+      <apply>
+        <csymbol cd="urn:kuhul:micronaut-patterns:v1">CorpusBinding</csymbol>
+        <list><ci>domain</ci><ci>keyPrefix</ci><ci>corpusPath</ci>
+          <ci>micronaut</ci><ci>entryCount</ci></list>
+      </apply>
+    </annotation-xml>
+    <annotation encoding="text/plain">
+Each CODEGEN expert corpus (data/gram/codegen-{domain}.jsonl) binds to a micronaut
+via key_prefix namespacing: GramStore keys are stored as {prefix}:{bigram_slug}.
+Domain→micronaut map: kuhul→CODEGEN-KUHUL-µ, cpp/h/hlsl→CODEGEN-CPP-µ,
+py→CODEGEN-PY-µ, js/ts→CODEGEN-JS-µ, cs→CODEGEN-CSHARP-µ,
+html→CODEGEN-HTML-µ, css→CODEGEN-CSS-µ, json→CODEGEN-JSON-µ,
+khl→CODEGEN-KHL-µ, klsl→CODEGEN-KLSL-µ.
+Loaded via GramStore::load_corpus() with 500K entry cap per domain. Corpora
+are regenerated with tools/scrape.py --split --recent --max-per-domain 100000
+to keep patterns stack-specific and recency-prioritized.
+    </annotation>
+  </semantics>
+
+  <mspace linebreak="newline"/>
+
+  <semantics>
+    <mrow>
+      <mi>Eligible</mi><mo>(</mo><mi>&#x03BC;</mi><mo>,</mo><mi>op</mi><mo>)</mo>
+      <mo>=</mo>
+      <mo>{</mo><mi>&#x03BC;</mi><mo>|</mo>
+      <mi>req</mi><mo>(</mo><mi>op</mi><mo>)</mo>
+      <mo>&#x2286;</mo>
+      <mi>cap</mi><mo>(</mo><mi>&#x03BC;</mi><mo>)</mo>
+      <mo>}</mo>
+    </mrow>
+    <annotation-xml encoding="MathML-Content">
+      <apply>
+        <csymbol cd="urn:kuhul:micronaut-patterns:v1">EligibilityGate</csymbol>
+        <apply><subset/><ci>req_op</ci><ci>cap_mu</ci></apply>
+      </apply>
+    </annotation-xml>
+    <annotation encoding="text/plain">
+Eligible_µ(op) = { µ | requires(op) ⊆ capabilities(µ) }.
+Eligibility gates before scoring. W·C·R never promotes an unqualified specialist.
+Eligible_µ(op) = ∅ → capability_miss; dispatch_block_reason = MISS_capability.
+CODEGEN experts are admitted only when the operator's domain requirement matches
+their declared capability set. Cross-domain lookup requires an explicit
+Bridge_alpha_beta admission; a corpus binding alone does not create a bridge.
+Distilled question patterns (data/gram/codegen-distill.jsonl) contribute phase-tagged
+evidence to the pattern pipeline but do not alter eligibility decisions.
+    </annotation>
+  </semantics>
+
+  <annotation encoding="text/plain">
+MicronautPatterns contract invariants:
+1. Recognition, interpretation, verification, selection, and execution are distinct.
+2. Binding exports preserve type, context scope, and provenance.
+3. Pattern scores are evidence, never XCFE permission.
+4. Induced patterns are proposals until verified and explicitly admitted.
+5. This MML document describes a contract; runtime support must be registered separately.
+6. CorpusBinding key_prefix namespacing prevents cross-domain collision in GramStore.
+7. EligibilityGate is a hard prerequisite; W·C·R scoring applies only within the eligible set.
+  </annotation>
+</math>
