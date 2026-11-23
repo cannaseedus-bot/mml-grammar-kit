@@ -1,4 +1,4 @@
-# K'UHUL MML Grammar Kit
+# KUHUL MML VECTOR MATH ENGINE 
 
 MathML/MML vector semantic grammar assets for symbolic runtime stacks.
 
